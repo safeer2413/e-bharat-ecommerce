@@ -1,9 +1,18 @@
-import React from 'react'
+import { Route, Router, Routes } from 'react-router-dom'
 import './App.css'                                                                                                                                                    
+import NoPage from './pages/nopage/NoPage'
+import HomePage from './pages/homepage/HomePage'
 
 function App() {
   return (
-    <div className='bg-red-500'>App</div>
+    <>
+    
+      <Routes>
+        <Route path="/" element={<HomePage />} ></Route>
+        <Route path="/*" element={<NoPage />} ></Route>
+      </Routes>
+    
+    </>
   )
 }
 
