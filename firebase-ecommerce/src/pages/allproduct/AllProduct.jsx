@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Layout from "../../components/layout/Layout"
 
 const products = [
     {
@@ -135,55 +136,59 @@ const products = [
         quantity: 1,
     },
 ];
-
-function ProductCard() {
-    const navigate = useNavigate();
+function AllProduct() {
+    const Navigate = useNavigate();
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-                <div
-                    key={product.id}
-                    className="bg-pink-100 rounded-lg shadow-md hover:shadow-xl hover:shadow-pink-200 transition duration-300"
-                >
-                    {/* Image */}
-                    <div className="overflow-hidden rounded-t-lg">
-                        <img
-                            onClick={() => navigate(`/productInfo/${product.id}`)}
-                            src={product.image}
-                            alt={product.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-all duration-300"
-                        />
-                    </div>
+        <Layout>
+            <h3 className="font-semibold text-center text-2xl truncate py-6">
+                All <i class="text-pink-600">Product's</i>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4 gap-6">
 
-                    {/* Content */}
-                    <div className="p-4">
-                        <h3 className="font-semibold text-lg truncate">
-                            {product.title}
-                        </h3>
-
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {product.desc}
-                        </p>
-
-                        <div className="flex justify-between items-center mt-4">
-                            <span className="text-pink-600 font-bold text-lg">
-                                ₹{product.price}
-                            </span>
-
-                            <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
-                                {product.trendingProductName}
-                            </span>
+                {products.map((product) => (
+                    <div
+                        key={product.id}
+                        className="bg-pink-100 rounded-lg shadow-md hover:shadow-xl hover:shadow-pink-200 transition duration-300"
+                    >
+                        {/* Image */}
+                        <div className="overflow-hidden rounded-t-lg">
+                            <img
+                                onClick={() => Navigate(`/productInfo/${product.id}`)}
+                                src={product.image}
+                                alt={product.title}
+                                className="w-full h-full object-cover hover:scale-105 transition-all duration-300"
+                            />
                         </div>
 
-                        <button className="mt-4 w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition">
-                            Add to Cart
-                        </button>
+                        {/* Content */}
+                        <div className="p-4">
+                            <h3 className="font-semibold text-lg truncate">
+                                {product.title}
+                            </h3>
+
+                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                                {product.desc}
+                            </p>
+
+                            <div className="flex justify-between items-center mt-4">
+                                <span className="text-pink-600 font-bold text-lg">
+                                    ₹{product.price}
+                                </span>
+
+                                <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
+                                    {product.trendingProductName}
+                                </span>
+                            </div>
+
+                            <button className="mt-4 w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition">
+                                Add to Cart
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    );
+                ))}
+            </div>
+        </Layout>
+    )
 }
 
-export default ProductCard;
-
+export default AllProduct

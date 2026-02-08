@@ -7,10 +7,13 @@ function Navbar() {
   const [open, setOpen] = useState(false);
 
   const menuLinks = [
-    { name: "All Product", path: "/products" },
+    { name: "All Product", path: "/allproduct" },
     { name: "Home", path: "/" },
     { name: "Signup", path: "/signup" },
-    { name: "Kamal", path: "/profile" },
+    { name: "Safeerkhan", path: "/user-dashboard" },
+    { name: "Login", path: "/login" },
+    { name: "logout", path: "/logout" },
+    { name: "Admin", path: "/admin-dashboard" },
   ];
 
   const mobileLinkClass =

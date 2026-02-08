@@ -22,17 +22,17 @@ function Footer() {
           <div className="flex justify-start w-full lg:w-auto ">
             <Link
               to="/"
-              className="hover:scale-105 transition duration-300 text-lg font-bold border-2 border-white 
-                         px-3 py-1 rounded-lg w-fit"
+              className="text-lg font-bold border-2 border-white lg:mb-10 lg:me-10
+                         px-3 py-1 rounded-lg w-fit hover:scale-105 transition duration-300"
             >
               E-Bharat
             </Link>
           </div>
 
           {/* Copyright */}
-          <div className="text-center text-sm text-gray-200 italic font-semibold">
+          <div className="text-center px-10 text-sm text-gray-200 italic font-semibold">
             © {new Date().getFullYear()} E-Bharat{" "}
-            <br className="hidden lg:block" />
+            {/* <br className="hidden lg:block" /> */}
             All rights reserved.
           </div>
 
