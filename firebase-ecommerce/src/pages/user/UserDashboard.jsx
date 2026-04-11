@@ -1,7 +1,9 @@
 import React from "react";
 import Layout from "../../components/layout/Layout";
 
-const Dashboard = () => {
+const userDashboard = () => {
+
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <Layout>
       <section className="bg-gray-50 min-h-screen py-8">
@@ -19,12 +21,16 @@ const Dashboard = () => {
             />
 
             {/* User Info */}
-            <div className="text-center md:text-left">
-              <p className="text-lg font-semibold">
-                Name : <span className="font-norma font-bold">Safeerkhan</span>
+            <div className="text-center text-pink-400">
+              <p className="text-lg font-bold">{user.role}</p>
+              <p className="text-lg font-bold">
+                Name : <span className="font-normal">{user.name}</span>
               </p>
-              <p className="text-gray-600">
-                Email : test@gmail.com
+              <p className="text-lg font-bold">
+                Email : <span className="font-normal">{user.email}</span>
+              </p>
+                <p className="text-lg font-bold">
+                Date : <span className="font-normal">{user.date}</span>
               </p>
             </div>
           </div>
@@ -47,7 +53,7 @@ const Dashboard = () => {
 
               <p className="mb-3">
                 <span className="font-semibold">Date</span><br />
-                4 March, 2023
+                {new Date().toLocaleDateString()}
               </p>
 
               <p className="mb-3">
@@ -95,4 +101,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default userDashboard;

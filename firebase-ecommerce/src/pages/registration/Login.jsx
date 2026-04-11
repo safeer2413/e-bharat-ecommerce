@@ -1,8 +1,73 @@
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import MyContext from "../../context/MyContext";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import toast from "react-hot-toast";
+import { auth, fireDB } from "../../firebase/FirebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { PulseLoader } from "react-spinners";
 
 function Login() {
+
+  const navigate = useNavigate();
+  const context = useContext(MyContext);
+
+  const { loader, setLoader } = context;
+
+  const [userLogin, setUserLogin] = useState({
+    email: "",
+    password: "",
+  });
+
+  const userLoginHandler = async (e) => {
+    e.preventDefault();
+    if (userLogin.email === "" || userLogin.password === "") {
+      toast.error("Please fill all the fields");
+      return;
+    }
+    setLoader(true);
+
+    try {
+      const user = await signInWithEmailAndPassword(auth, userLogin.email, userLogin.password);
+
+      try {
+        const q = query(
+          collection(fireDB, "user"),
+          where("uid", "==", user?.user?.uid)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        let userData;
+        querySnapshot.forEach((doc) => {
+          userData = doc.data();
+        });
+
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        setUserLogin({ email: "", password: "" });
+        toast.success("Login Successfull");
+        setLoader(false);
+
+        if (userData.role === "Admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/user-dashboard");
+        }
+
+        return userData;
+
+      } catch (error) {
+        toast.error(error.message);
+        setLoader(false);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      setLoader(false);
+    }
+  }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-pink-200">
+    <div className="min-h-screen flex items-center justify-center bg-pink-200 relative">
       <div className="w-full max-w-md bg-pink-400 p-8 rounded-xl shadow-lg">
 
         {/* Title */}
@@ -10,12 +75,29 @@ function Login() {
           Login
         </h2>
 
+        {loader && (
+          <div className="absolute inset-0 z-50 
+    flex justify-center items-center
+    bg-white/20 backdrop-blur-[1px]">
+            <HashLoader
+              color="#fd4967"
+              size={50}
+            />
+          </div>
+        )}
+
         {/* Form */}
         <form className="space-y-4">
 
           <input
             type="email"
             placeholder="Email Address"
+            value={userLogin.email}
+            onChange={(e) => {
+              setUserLogin({
+                ...userLogin, email: e.target.value
+              })
+            }}
             className="w-full px-4 py-2 placeholder:text-pink-400
  text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
           />
@@ -23,12 +105,19 @@ function Login() {
           <input
             type="password"
             placeholder="Password"
+            value={userLogin.password}
+            onChange={(e) => {
+              setUserLogin({
+                ...userLogin, password: e.target.value
+              })
+            }}
             className="w-full px-4 py-2 placeholder:text-pink-400
  text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
           />
 
           <button
             type="submit"
+            onClick={userLoginHandler}
             className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700 transition"
           >
             Login
@@ -42,6 +131,7 @@ function Login() {
             Sign Up
           </Link>
         </p>
+
       </div>
     </div>
   );

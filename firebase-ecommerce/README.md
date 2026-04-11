@@ -1,16 +1,135 @@
-# React + Vite
+const products = [
+    {
+        id: 1,
+        image:
+            "https://i.pinimg.com/564x/3e/05/ce/3e05cefbc7eec79ac175ea8490a67939.jpg",
+        title: "Hand Painted Blue Kaushalam Tea Pot",
+        desc: "Hand painted aluminium tea pot, ethically made with premium finish.",
+        price: 150,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 2,
+        image:
+            "https://i.pinimg.com/736x/e4/61/f2/e461f2246b6ad93e2099d98780626396.jpg",
+        title: "Kaushalam Copper Kalash Pot",
+        desc: "Traditional copper kalash with handcrafted design.",
+        price: 120,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 3,
+        image:
+            "https://i.pinimg.com/564x/fd/50/68/fd50688767adb47aba7204f034554cbd.jpg",
+        title: "Winter Jacket for Men",
+        desc: "Stylish winter jacket with premium fabric and comfort fit.",
+        price: 90,
+        category: "Fashion",
+        trendingProductName: "Trending",
+        quantity: 1,
+    },
+    {
+        id: 4,
+        image:
+            "https://i.pinimg.com/564x/22/80/8d/22808d88ada424962f2e064f3075b2d1.jpg",
+        title: "Smart Android Mobile",
+        desc: "Latest android smartphone with powerful performance.",
+        price: 300,
+        category: "Electronics",
+        trendingProductName: "Trending",
+        quantity: 1,
+    },
+    {
+        id: 5,
+        image:
+            "https://i.pinimg.com/564x/3e/05/ce/3e05cefbc7eec79ac175ea8490a67939.jpg",
+        title: "Laptop for Developers",
+        desc: "High performance laptop suitable for coding and design.",
+        price: 850,
+        category: "Electronics",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    {
+        id: 6,
+        image:
+            "https://i.pinimg.com/564x/3e/05/ce/3e05cefbc7eec79ac175ea8490a67939.jpg",
+        title: "Hand Painted Blue Kaushalam Tea Pot",
+        desc: "Hand painted aluminium tea pot, ethically made with premium finish.",
+        price: 150,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 7,
+        image:
+            "https://i.pinimg.com/736x/e4/61/f2/e461f2246b6ad93e2099d98780626396.jpg",
+        title: "Kaushalam Copper Kalash Pot",
+        desc: "Traditional copper kalash with handcrafted design.",
+        price: 120,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 8,
+        image:
+            "https://i.pinimg.com/564x/fd/50/68/fd50688767adb47aba7204f034554cbd.jpg",
+        title: "Winter Jacket for Men",
+        desc: "Stylish winter jacket with premium fabric and comfort fit.",
+        price: 90,
+        category: "Fashion",
+        trendingProductName: "Trending",
+        quantity: 1,
+    },
+    {
+        id: 9,
+        image:
+            "https://i.pinimg.com/564x/22/80/8d/22808d88ada424962f2e064f3075b2d1.jpg",
+        title: "Smart Android Mobile",
+        desc: "Latest android smartphone with powerful performance.",
+        price: 300,
+        category: "Electronics",
+        trendingProductName: "Trending",
+        quantity: 1,
+    },
+    {
+        id: 10,
+        image:
+            "https://i.pinimg.com/564x/3e/05/ce/3e05cefbc7eec79ac175ea8490a67939.jpg",
+        title: "Laptop for Developers",
+        desc: "High performance laptop suitable for coding and design.",
+        price: 850,
+        category: "Electronics",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 11,
+        image:
+            "https://i.pinimg.com/564x/3e/05/ce/3e05cefbc7eec79ac175ea8490a67939.jpg",
+        title: "Hand Painted Blue Kaushalam Tea Pot",
+        desc: "Hand painted aluminium tea pot, ethically made with premium finish.",
+        price: 150,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+    {
+        id: 12,
+        image:
+            "https://i.pinimg.com/736x/e4/61/f2/e461f2246b6ad93e2099d98780626396.jpg",
+        title: "Kaushalam Copper Kalash Pot",
+        desc: "Traditional copper kalash with handcrafted design.",
+        price: 120,
+        category: "Home",
+        trendingProductName: "Featured",
+        quantity: 1,
+    },
+];

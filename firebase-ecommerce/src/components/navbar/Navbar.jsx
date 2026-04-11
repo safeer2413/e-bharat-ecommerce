@@ -1,20 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SearchBar from "../searchBar/SearchBar";
 import { FaShoppingCart } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-
-  const menuLinks = [
-    { name: "All Product", path: "/allproduct" },
-    { name: "Home", path: "/" },
-    { name: "Signup", path: "/signup" },
-    { name: "Safeerkhan", path: "/user-dashboard" },
-    { name: "Login", path: "/login" },
-    { name: "logout", path: "/logout" },
-    { name: "Admin", path: "/admin-dashboard" },
-  ];
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("users");
+    navigate("/login");
+    toast.success("Logout Successfull");
+  };
 
   const mobileLinkClass =
     "hover:text-black hover:bg-pink-600 rounded-lg py-2 transition-colors duration-300";
@@ -33,18 +31,51 @@ inline-block transform-gpu origin-center">
           <Link to="/">E-Bharat</Link>
         </div>
 
-        {/* Desktop Menu */}
         <ul className="hidden md:flex gap-6 text-sm font-bold">
-          {menuLinks.map((link) => (
-            <li key={link.name}>
-              <Link
-                to={link.path}
-                className={desktopLinkClass}
-              >
-                {link.name}
-              </Link>
+
+          <li className={desktopLinkClass}>
+            <Link to="/">Home</Link>
+          </li>
+
+          <li className={desktopLinkClass}>
+            <Link to="/allproduct">All Product</Link>
+          </li>
+
+          {/* Signup */}
+          {!user && (
+            <li className={desktopLinkClass}>
+              <Link to="/signup">Signup</Link>
             </li>
-          ))}
+          )}
+
+          {/* Login */}
+          {!user && (
+            <li className={desktopLinkClass}>
+              <Link to="/login">Login</Link>
+            </li>
+          )}
+
+          {/* User */}
+          {user?.role === "User" && (
+            <li className={desktopLinkClass}>
+              <Link to="/user-dashboard" className="text-gray-800 [text-shadow:1px_1px_2px_white]">{user.name}</Link>
+            </li>
+          )}
+
+          {/* Admin */}
+          {user?.role === "Admin" && (
+            <li className={desktopLinkClass}>
+              <Link to="/admin-dashboard">Admin</Link>
+            </li>
+          )}
+
+          {/* Logout  */}
+          {user && (
+            <li className={desktopLinkClass} onClick={logout}>
+              Logout
+            </li>
+          )}
+
         </ul>
 
         {/* Desktop Search */}
@@ -70,17 +101,31 @@ inline-block transform-gpu origin-center">
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden mt-4 bg-pink-400 rounded-lg p-4 flex flex-col gap-4 text-center font-bold w-48 mx-auto">
-          {menuLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={mobileLinkClass}
-              onClick={() => setOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
 
+          <Link to="/allproduct" className={mobileLinkClass}>All Product</Link>
+
+
+          {!user && (
+            <Link to="/signup" className={mobileLinkClass}>Signup</Link>
+          )}
+
+          {!user && (
+            <Link to="/login" className={mobileLinkClass}>Login</Link>
+          )}
+
+          {user?.role === "User" && (
+            <Link to="/user-dashboard" className={`text-gray-800 [text-shadow:1px_1px_2px_white] ${mobileLinkClass}`}>{user.name}</Link>
+          )}
+
+          {user?.role === "Admin" && (
+            <Link to="/admin-dashboard" className={mobileLinkClass}>Admin</Link>
+          )}
+
+          {user && (
+            <div className="cursor-pointer" onClick={logout}>
+              Logout
+            </div>
+          )}
         </div>
       )}
     </nav>
