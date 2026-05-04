@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MyContext from "../../context/MyContext";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { PulseLoader } from "react-spinners";
+import { HashLoader } from "react-spinners";
 
 function Login() {
 
@@ -21,51 +21,57 @@ function Login() {
 
   const userLoginHandler = async (e) => {
     e.preventDefault();
-    if (userLogin.email === "" || userLogin.password === "") {
+
+    if (!userLogin.email || !userLogin.password) {
       toast.error("Please fill all the fields");
       return;
     }
+
     setLoader(true);
 
     try {
-      const user = await signInWithEmailAndPassword(auth, userLogin.email, userLogin.password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        userLogin.email,
+        userLogin.password
+      );
 
-      try {
-        const q = query(
-          collection(fireDB, "user"),
-          where("uid", "==", user?.user?.uid)
-        );
+      const uid = userCredential.user.uid;
 
-        const querySnapshot = await getDocs(q);
+      const userDoc = await getDoc(doc(fireDB, "user", uid));
 
-        let userData;
-        querySnapshot.forEach((doc) => {
-          userData = doc.data();
-        });
-
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        setUserLogin({ email: "", password: "" });
-        toast.success("Login Successfull");
+      // check document exists
+      if (!userDoc.exists()) {
+        toast.error("User data not found in database");
         setLoader(false);
-
-        if (userData.role === "Admin") {
-          navigate("/admin-dashboard");
-        } else {
-          navigate("/user-dashboard");
-        }
-
-        return userData;
-
-      } catch (error) {
-        toast.error(error.message);
-        setLoader(false);
+        return;
       }
+
+      const userData = userDoc.data();
+
+      // safe save
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setUserLogin({ email: "", password: "" });
+      toast.success("Login Successful");
+
+      // navigation logic
+      if (userData.role === "admin") {
+        navigate("/admin-dashboard");
+      } else if (userData.role === "user") {
+        navigate("/user-dashboard");
+      } else {
+        toast.error("Invalid user role");
+      }
+
     } catch (error) {
+      console.error(error);
       toast.error(error.message);
-      setLoader(false);
+    } finally {
+      setLoader(false); // always run
     }
-  }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-pink-200 relative">
       <div className="w-full max-w-md bg-pink-400 p-8 rounded-xl shadow-lg">

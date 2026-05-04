@@ -3,9 +3,11 @@ import { useState } from "react";
 import SearchBar from "../searchBar/SearchBar";
 import { FaShoppingCart } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const cartItems = useSelector((state) => state.cart);
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const logout = () => {
@@ -87,7 +89,19 @@ inline-block transform-gpu origin-center">
         {/* Cart */}
         <Link className="hover:text-black font-bold flex items-center gap-1 hover:bg-pink-400 rounded-lg p-1 text-lg transition-colors duration-300"
           onClick={() => setOpen(false)} to="/cart">
-          <FaShoppingCart />[ 0 ]</Link>
+          <div className="relative">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/3514/3514491.png"
+              alt="cart"
+              className="w-9"
+            />
+
+            <span className="absolute top-1 right-1 text-white 
+    text-sm w-6 h-6 flex items-center justify-center">
+              {cartItems.length}
+            </span>
+          </div>
+        </Link>
 
         {/* Hamburger */}
         <button

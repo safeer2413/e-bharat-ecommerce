@@ -2,17 +2,15 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MyContext from "../../context/MyContext";
 import toast from "react-hot-toast";
-import { PulseLoader } from "react-spinners";
+import { HashLoader, PulseLoader } from "react-spinners";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 function Signup() {
 
     const context = useContext(MyContext);
     const { loader, setLoader } = context;
-
-    // Navigate
     const navigate = useNavigate();
 
     // user signup State
@@ -20,14 +18,14 @@ function Signup() {
         name: "",
         email: "",
         password: "",
-        role: "User",
+        role: "user",
     });
 
     // user signup function
     const userSignup = async (e) => {
         e.preventDefault();
         //validation
-        if (signupUser.name === "" || signupUser.email === "" || signupUser.password === "") {
+        if (!signupUser.name || !signupUser.email || !signupUser.password) {
             toast.error("Please fill all the fields");
             return;
         }
@@ -40,38 +38,36 @@ function Signup() {
                 name: signupUser.name,       // form input
                 email: users.user.email,     // firebase return
                 uid: users.user.uid,         // firebase generated id
-                role: signupUser.role,
-                time: Timestamp.now(),
-                date: new Date().toLocaleDateString(
-                    "en-US",
-                    {
-                        month: "short",
-                        day: "2-digit",
-                        year: "numeric"
-                    }
-                )
+                role: "user",
+                createdAt: Timestamp.now()
             }
 
-            // crete user reference
-            const userRef = collection(fireDB, "user");
-
             // Add user Details
-            await addDoc(userRef, user);
+            await setDoc(doc(fireDB, "user", user.uid), user);
+            toast.success("User created successfully");
 
             setSignupUser({
                 name: "",
                 email: "",
                 password: "",
-                role: "User"
+                role: "user"
             });
 
-            toast.success("User created successfully");
-            setLoader(false);
             navigate("/login");
 
         } catch (error) {
 
-            toast.error(error.message);
+            console.error(error);
+
+            if (error.code === "auth/email-already-in-use") {
+                toast.error("Email already exists");
+            } else if (error.code === "auth/weak-password") {
+                toast.error("Password must be at least 6 characters");
+            } else {
+                toast.error(error.message);
+            }
+
+        } finally {
             setLoader(false);
         }
     }

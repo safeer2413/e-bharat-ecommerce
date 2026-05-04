@@ -1,39 +1,53 @@
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
-import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { fireDB } from "../../firebase/FirebaseConfig";
+import { useContext } from "react";
 import ProductInfoSkeleton from "../../components/skeleton/ProductInfoSkeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+import toast from "react-hot-toast";
+import MyContext from "../../context/MyContext";
+
 function ProductInfo() {
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const { getAllProducts, loader } = useContext(MyContext);
+
+  // const [product, setProduct] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart);
 
-  useEffect(() => {
-    const getProductData = async () => {
-      setLoading(true)
+  // ✅ safer check
+  const isInCart = cartItems.some(item => item.id === id);
 
-      const docSnap = await getDoc(doc(fireDB, "products", id));
+  // ✅ get product from context
+  const product = getAllProducts.find(item => item.id === id) || null;
 
-      if (docSnap.exists()) {
-        setProduct(docSnap.data())
-      }
+  // ✅ toggle cart
+  const handleCartClick = () => {
+    if (!product) return;
 
-      setLoading(false)
+    if (isInCart) {
+      dispatch(deleteFromCart(product.id));
+      toast.error("Removed from Cart");
+    } else {
+      const cleanProduct = {
+        ...product,
+        time: product.time?.toMillis?.() || Date.now()
+      };
+      dispatch(addToCart(cleanProduct));
+      toast.success("Added to Cart");
     }
+  };
 
-    getProductData()
-  }, [id])
-
-  if (!product && !loading) {
+  // ❗ product + loading
+  if (!product && !loader) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h2 className="text-2xl font-bold text-red-500">Product Not Found</h2>
         <button
           onClick={() => navigate(-1)}
-          className="mt-4 bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700"
+          className="mt-4 bg-pink-600 text-white px-6 py-2 rounded-lg"
         >
           Go Back
         </button>
@@ -42,69 +56,70 @@ function ProductInfo() {
   }
 
   return (
-    <Layout className="max-w-6xl mx-auto p-6 relative">
+    <Layout className="max-w-6xl mx-auto p-6">
       <button
         onClick={() => navigate(-1)}
-        className="m-4 text-pink-600 font-semibold hover:underline"
+        className="mb-4 text-pink-600 font-semibold hover:underline"
       >
         ← Back to Products
       </button>
 
-      {loading ? (
+      {loader ? (
         <ProductInfoSkeleton />
       ) : (
-        product && (<div className="w-3/4 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-lg p-6 mx-auto">
+        product && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-lg p-6">
 
-          {/* Image Section */}
-          <div className="flex justify-center">
-            <img
-              src={product.imageUrl}
-              alt={product.title}
-              className="rounded-lg max-h-[450px] object-cover shadow-md hover:scale-105 transition"
-            />
-          </div>
-
-          {/* Content Section */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-              {product.title}
-            </h1>
-
-            <div className="flex items-center mt-3">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <span key={index} className="text-pink-500 text-xl">
-                  {index < product?.rating ? "★" : "☆"}
-                </span>
-              ))}
+            {/* Image */}
+            <div className="flex justify-center">
+              <img
+                loading="lazy"
+                src={product.imageUrl}
+                alt={product.title}
+                className="rounded-lg max-h-[450px] object-cover"
+              />
             </div>
 
-            <p className="text-gray-500 mt-4">
-              Category: <span className="font-semibold">{product.category}</span>
-            </p>
+            {/* Content */}
+            <div>
+              <h1 className="text-3xl font-bold">{product.title}</h1>
 
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
+              <div className="flex mt-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i}>
+                    {i < product.rating ? "★" : "☆"}
+                  </span>
+                ))}
+              </div>
 
-            <div className="mt-6">
-              <span className="text-3xl font-bold text-pink-600">
+              <p className="mt-3">
+                Category: <b>{product.category}</b>
+              </p>
+
+              <p className="mt-4">{product.description}</p>
+
+              <h2 className="mt-6 text-2xl font-bold text-pink-600">
                 ₹{product.price}
-              </span>
+              </h2>
+
+              <div className="mt-6 flex gap-4">
+                <button
+                  onClick={handleCartClick}
+                  className={`flex-1 py-3 rounded text-white ${isInCart ? "bg-red-600" : "bg-pink-600"
+                    }`}
+                >
+                  {isInCart ? "Remove from Cart" : "Add to Cart"}
+                </button>
+
+                <button className="flex-1 border border-pink-600 text-pink-600 py-3 rounded">
+                  Buy Now
+                </button>
+              </div>
             </div>
 
-            <div className="mt-8 flex gap-4">
-              <button className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition">
-                Add to Cart
-              </button>
-
-              <button className="flex-1 border-2 border-pink-600 text-pink-600 py-3 rounded-lg hover:bg-pink-50 transition">
-                Buy Now
-              </button>
-            </div>
           </div>
-        </div>)
+        )
       )}
-
     </Layout>
   );
 }

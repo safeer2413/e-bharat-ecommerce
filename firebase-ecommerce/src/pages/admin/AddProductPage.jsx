@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { HashLoader } from "react-spinners";
@@ -15,18 +15,10 @@ const AddProductPage = () => {
     title: "",
     price: "",
     imageUrl: "",
-    category: "fashion",
+    category: "",
     description: "",
     quantity: 1,
-    time: Timestamp.now(),
-    date: new Date().toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "2-digit",
-        year: "numeric"
-      }
-    )
+
   });
 
   const addProduct = async (e) => {
@@ -37,7 +29,16 @@ const AddProductPage = () => {
     setIsLoading(true);
     try {
       const productRef = collection(fireDB, "products");
-      await addDoc(productRef, product);
+
+      const productWithTime = {
+        ...product,
+        imageUrl:
+          product.imageUrl ||
+          "https://static.vecteezy.com/system/resources/previews/022/059/000/non_2x/no-image-available-icon-vector.jpg",
+        time: Date.now(),
+        date: new Date().toISOString()
+      };
+      await addDoc(productRef, productWithTime);
       toast.success("Product Added Successfully");
       navigate("/admin-dashboard");
       setIsLoading(false);
@@ -119,17 +120,21 @@ const AddProductPage = () => {
           {/* Category */}
           <select
             value={product.category}
+            placeholder="-Select Category-"
             onChange={(e) =>
               setProduct({ ...product, category: e.target.value })
             }
             className="w-full px-4 py-2 border border-pink-400 rounded-lg 
             bg-pink-100 text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400"
           >
-            <option value="fashion">Fashion</option>
-            <option value="electronics">Electronics</option>
-            <option value="home">Home</option>
+            <option value="sunglass">Sunglass</option>
+            <option value="shirt">Shirt</option>
+            <option value="headphone">Headphone</option>
             <option value="mobile">Mobile</option>
-            <option value="mobile">Laptop</option>
+            <option value="laptop">Laptop</option>
+            <option value="shoes">Shoes</option>
+            <option value="home">Home</option>
+            <option value="watch">Watch</option>
           </select>
 
           {/* Description */}

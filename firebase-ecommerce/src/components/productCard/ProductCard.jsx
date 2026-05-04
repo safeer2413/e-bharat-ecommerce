@@ -1,73 +1,81 @@
-import { useContext } from "react";
+import { useMemo } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import MyContext from "../../context/MyContext";
-import AllProductSkeleton from "../skeleton/AllProductSkeleton";
-function ProductCard() {
-    const context = useContext(MyContext);
-    const { getAllProducts, loader } = context;
+import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+function ProductCard({ product }) {
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart);
+    const addCart = (product) => {
+        const cleanProduct = {
+            ...product,
+            time: product.time?.toMillis?.() || Date.now()
+        };
+        dispatch(addToCart(cleanProduct));
+        toast.success("Added to Cart");
+    }
+
+    const removeCart = (id) => {
+        dispatch(deleteFromCart(id));
+        toast.error("Removed from Cart");
+    }
+
+    const cartIds = useMemo(() => {
+        return new Set(cartItems.map(item => item.id));
+    }, [cartItems]);
+
     return (
-        <>
-            {loader ? (
-                <AllProductSkeleton />
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 relative">
-                    {getAllProducts.length === 0 ? (
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <h1 className="text-2xl font-semibold text-gray-600">
-                                Product Not Found
-                            </h1>
-                        </div>
-                    ) : (
-                        getAllProducts.map((product) => (
-                            <div
-                                key={product.id}
-                                className="bg-pink-100 rounded-lg shadow-md hover:shadow-xl hover:shadow-pink-200 transition duration-300"
-                            >
-                                {/* Image */}
-                                <div className="overflow-hidden rounded-t-lg h-72">
-                                    <img
-                                        onClick={() => navigate(`/productInfo/${product.id}`)}
-                                        src={product.imageUrl}
-                                        alt={product.title}
-                                        className="w-full p-4 bg-white rounded-lg h-full object-cove hover:scale-105 transition-all duration-300"
-                                    />
-                                </div>
+        <div className="bg-pink-100 rounded-lg shadow-md hover:shadow-xl transition duration-300">
 
-                                {/* Content */}
-                                <div className="p-4">
-                                    <h3 className="font-semibold text-lg truncate">
-                                        {product.title}
-                                    </h3>
+            <div className="overflow-hidden rounded-t-lg h-72 p-2">
+                <img
+                    onClick={() => navigate(`/productInfo/${product.id}`)}
+                    src={product.imageUrl}
+                    loading="lazy"
+                    alt={product.title}
+                    className="w-full h-full p-2 rounded object-contain bg-white hover:scale-105 transition-all duration-300"
+                />
+            </div>
 
-                                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                                        {product.description}
-                                    </p>
+            <div className="p-4">
+                <h3 className="font-semibold text-lg truncate">
+                    {product.title}
+                </h3>
 
-                                    <div className="flex justify-between items-center mt-4">
-                                        <span className="text-pink-600 font-bold text-lg">
-                                            ₹{product.price}
-                                        </span>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    {product.description}
+                </p>
 
-                                        <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
-                                            {product.trendingProductName}
-                                        </span>
-                                    </div>
+                <div className="flex justify-between items-center mt-4">
+                    <span className="text-pink-600 font-bold text-lg">
+                        ₹{product.price}
+                    </span>
 
-                                    <button className="mt-4 w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition">
-                                        Add to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    )}
+                    <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
+                        {product.trendingProductName}
+                    </span>
                 </div>
 
-            )
-            }
-        </>
+                {cartIds.has(product.id) ? (
+                    <button
+                        className="mt-4 w-full bg-red-800 text-white py-2 rounded-lg hover:bg-red-900 transition duration-300"
+                        onClick={() => removeCart(product.id)}
+                    >
+                        Remove from Cart
+                    </button>
+                ) : (
+                    <button
+                        className="mt-4 w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition duration-300"
+                        onClick={() => addCart(product)}
+                    >
+                        Add to Cart
+                    </button>
+                )}
+            </div>
+        </div>
     );
 }
 
-export default ProductCard;
-
+export default ProductCard

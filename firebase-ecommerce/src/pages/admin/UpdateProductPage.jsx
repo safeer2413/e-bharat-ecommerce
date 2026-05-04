@@ -154,11 +154,14 @@ function UpdateProductPage() {
             className="w-full px-4 py-2 border border-pink-400 rounded-lg 
             bg-pink-100 text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400"
           >
-            <option value="fashion">Fashion</option>
-            <option value="electronics">Electronics</option>
-            <option value="home">Home</option>
+            <option value="sunglass">Sunglass</option>
+            <option value="shirt">Shirt</option>
+            <option value="headphone">Headphone</option>
             <option value="mobile">Mobile</option>
-            <option value="mobile">Laptop</option>
+            <option value="laptop">Laptop</option>
+            <option value="shoes">Shoes</option>
+            <option value="home">Home</option>
+            <option value="watch">Watch</option>
           </select>
 
           {/* Description */}

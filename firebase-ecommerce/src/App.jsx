@@ -15,8 +15,17 @@ import AddProductPage from './pages/admin/AddProductPage'
 import UpdateProductPage from './pages/admin/UpdateProductPage'
 import ProtectRouteForUser from './components/ProtectRoute.jsx/ProtectRouteForUser';
 import ProtectRouteForAdmin from './components/ProtectRoute.jsx/ProtectRouteForAdmin';
+import CategoryPage from './pages/category/CategoryPage';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 function App() {
+  const cartItems = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
   return (
     <>
       <ScrollTop />
@@ -28,6 +37,7 @@ function App() {
         <Route path="/allproduct" element={<AllProduct />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/category/:categoryname" element={<CategoryPage />} />
         <Route
           path="/user-dashboard"
           element={
