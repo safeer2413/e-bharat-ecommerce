@@ -5,7 +5,7 @@ import ProductCard from "../productCard/ProductCard";
 function ProductList() {
     const context = useContext(MyContext);
     const { getAllProducts, loader } = context;
-    
+
     return (
         <>
             {loader ? (

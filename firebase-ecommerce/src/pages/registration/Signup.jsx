@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import MyContext from "../../context/MyContext";
 import toast from "react-hot-toast";
 import { HashLoader, PulseLoader } from "react-spinners";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -8,9 +7,7 @@ import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 function Signup() {
-
-    const context = useContext(MyContext);
-    const { loader, setLoader } = context;
+    const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
 
     // user signup State
@@ -25,7 +22,7 @@ function Signup() {
     const userSignup = async (e) => {
         e.preventDefault();
         //validation
-        if (!signupUser.name || !signupUser.email || !signupUser.password) {
+        if (!signupUser.name.trim() || !signupUser.email.trim() || !signupUser.password.trim()) {
             toast.error("Please fill all the fields");
             return;
         }
@@ -39,7 +36,11 @@ function Signup() {
                 email: users.user.email,     // firebase return
                 uid: users.user.uid,         // firebase generated id
                 role: "user",
-                createdAt: Timestamp.now()
+                date: new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit"
+                })
             }
 
             // Add user Details
@@ -83,8 +84,8 @@ function Signup() {
 
                 {loader && (
                     <div className="absolute inset-0 z-50 
-    flex justify-center items-center
-    bg-white/20 backdrop-blur-[1px]">
+                                     flex justify-center items-center
+                                     bg-white/20 backdrop-blur-[1px]">
                         <HashLoader
                             color="#fd4967"
                             size={50}
@@ -96,29 +97,32 @@ function Signup() {
                 <form className="space-y-4">
                     <input
                         type="text"
+                        required
                         placeholder="Full Name"
                         value={signupUser.name}
                         onChange={(e) => setSignupUser({ ...signupUser, name: e.target.value })}
                         className="w-full px-4 py-2 placeholder:text-pink-400
- text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                                     text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
                     />
 
                     <input
                         type="email"
+                        required
                         placeholder="Email Address"
                         value={signupUser.email}
                         onChange={(e) => setSignupUser({ ...signupUser, email: e.target.value })}
                         className="w-full px-4 py-2 placeholder:text-pink-400
- text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                                     text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
                     />
 
                     <input
                         type="password"
+                        required
                         placeholder="Password"
                         value={signupUser.password}
                         onChange={(e) => setSignupUser({ ...signupUser, password: e.target.value })}
                         className="w-full px-4 py-2 placeholder:text-pink-400
- text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                                     text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
                     />
 
                     <button

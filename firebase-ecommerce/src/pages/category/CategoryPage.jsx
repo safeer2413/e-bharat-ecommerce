@@ -25,7 +25,7 @@ function CategoryPage() {
                         {/* Back Button */}
                         <button
                             onClick={() => navigate(-1)}
-                            className="px-4 py-1 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-200 transition"
+                            className="px-4 font-semibold py-1 bg-pink-700 text-white rounded-lg hover:bg-pink-500 transition duration-300 ease-in-out"
                         >
                             ← Back
                         </button>

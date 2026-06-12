@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import MyContext from "../../context/MyContext";
 import { doc, getDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
@@ -10,9 +9,7 @@ import { HashLoader } from "react-spinners";
 function Login() {
 
   const navigate = useNavigate();
-  const context = useContext(MyContext);
-
-  const { loader, setLoader } = context;
+  const [loader, setLoader] = useState(false);
 
   const [userLogin, setUserLogin] = useState({
     email: "",
@@ -22,7 +19,7 @@ function Login() {
   const userLoginHandler = async (e) => {
     e.preventDefault();
 
-    if (!userLogin.email || !userLogin.password) {
+    if (!userLogin.email.trim() || !userLogin.password.trim()) {
       toast.error("Please fill all the fields");
       return;
     }
@@ -68,7 +65,7 @@ function Login() {
       console.error(error);
       toast.error(error.message);
     } finally {
-      setLoader(false); // always run
+      setLoader(false);
     }
   };
 
@@ -83,8 +80,8 @@ function Login() {
 
         {loader && (
           <div className="absolute inset-0 z-50 
-    flex justify-center items-center
-    bg-white/20 backdrop-blur-[1px]">
+                           flex justify-center items-center
+                           bg-white/20 backdrop-blur-[1px]">
             <HashLoader
               color="#fd4967"
               size={50}
@@ -97,6 +94,7 @@ function Login() {
 
           <input
             type="email"
+            required
             placeholder="Email Address"
             value={userLogin.email}
             onChange={(e) => {
@@ -105,11 +103,12 @@ function Login() {
               })
             }}
             className="w-full px-4 py-2 placeholder:text-pink-400
- text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                         text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
           />
 
           <input
             type="password"
+            required
             placeholder="Password"
             value={userLogin.password}
             onChange={(e) => {
@@ -118,7 +117,7 @@ function Login() {
               })
             }}
             className="w-full px-4 py-2 placeholder:text-pink-400
- text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                         text-pink-600 rounded-lg border border-pink-600 bg-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
           />
 
           <button

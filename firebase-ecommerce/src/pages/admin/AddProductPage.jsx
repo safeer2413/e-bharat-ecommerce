@@ -1,69 +1,107 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { HashLoader } from "react-spinners";
+import { uploadImage } from "../../utils/cloudinary";
+import ProductFormPage from "./ProductFormPage";
 
 const AddProductPage = () => {
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   // Product State
   const [product, setProduct] = useState({
     title: "",
-    price: "",
-    imageUrl: "",
+    brand: "",
+
     category: "",
     description: "",
-    quantity: 1,
 
+    price: "",
+    originalPrice: "",
+
+    stock: "",
+
+    imageUrl: "",
+
+    deliveryDays: "",
+    warranty: "",
+    returnPolicy: "",
   });
+
 
   const addProduct = async (e) => {
     e?.preventDefault();
-    if (product.title == "" || product.price == "" || product.imageUrl == "") {
+
+    if (product.title == "" || product.price == "" || (!product.imageUrl && !imageFile)) {
       return toast.error("Please fill all the fields");
     }
-    setIsLoading(true);
-    try {
-      const productRef = collection(fireDB, "products");
 
+    setIsLoading(true);
+
+    try {
+
+      let downloadURL = "";
+
+      if (imageFile) {
+        downloadURL = await uploadImage(imageFile);
+      }
+
+      const productRef = collection(fireDB, "products");
       const productWithTime = {
         ...product,
+        price: Number(product.price),
+        originalPrice: Number(product.originalPrice),
+        stock: Number(product.stock),
+        deliveryDays: Number(product.deliveryDays),
         imageUrl:
+          downloadURL ||
           product.imageUrl ||
           "https://static.vecteezy.com/system/resources/previews/022/059/000/non_2x/no-image-available-icon-vector.jpg",
-        time: Date.now(),
-        date: new Date().toISOString()
+
+        date: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "2-digit"
+        }),
+
+        time: Timestamp.now()
       };
+
       await addDoc(productRef, productWithTime);
       toast.success("Product Added Successfully");
       navigate("/admin-dashboard");
-      setIsLoading(false);
     } catch (error) {
       toast.error("Something went wrong");
       console.log(error);
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-200 relative">
-      <div className="bg-pink-200 border border-pink-300 p-8 rounded-xl shadow-lg w-full max-w-md">
+    <div className=" min-h-screen bg-gradient-to-br from-pink-50 via-rose-100
+                     to-pink-200 flex items-center justify-center p-6 relative ">
+      <div className="relative bg-white backdrop-blur-md border border-pink-200
+                       shadow-2xl rounded-3xl p-8 w-full max-w-5xl">
 
         <button
           onClick={() => navigate(-1)}
-          className="mb-3 px-4 py-1 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-50 transition-all duration-300"
+          className="mb-4 px-4 py-1 border border-pink-400 font-semibold
+                           bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-50
+                           transition-all duration-300"
         >
           ← Back
         </button>
 
         {isLoading && (
           <div className="absolute inset-0 z-50 
-    flex justify-center items-center
-    bg-white/20 backdrop-blur-[1px]">
+                           flex justify-center items-center
+                           bg-white/20 backdrop-blur-[1px] rounded-3xl">
             <HashLoader
               color="#fd4967"
               size={50}
@@ -71,94 +109,21 @@ const AddProductPage = () => {
           </div>
         )}
 
-        {/* Title */}
+        {/* Heading */}
         <h1 className="text-2xl font-bold text-center text-pink-600 mb-6">
           Add Product
         </h1>
 
-        <form onSubmit={addProduct} className="space-y-4">
+        <form onSubmit={addProduct} className="space-y-8">
 
-          {/* Title */}
-          <input
-            type="text"
-            placeholder="Product Title"
-            value={product.title}
-            onChange={(e) =>
-              setProduct({ ...product, title: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-pink-400 rounded-lg 
-            bg-pink-100 text-pink-600 placeholder:text-pink-400
-            focus:outline-none focus:ring-2 focus:ring-pink-400"
+          <ProductFormPage
+            product={product}
+            setProduct={setProduct}
+            imageFile={imageFile}
+            setImageFile={setImageFile}
+            buttonText="Add Product"
+
           />
-
-          {/* Price */}
-          <input
-            type="number"
-            placeholder="Product Price"
-            value={product.price}
-            onChange={(e) =>
-              setProduct({ ...product, price: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-pink-400 rounded-lg 
-            bg-pink-100 text-pink-600 placeholder:text-pink-400
-            focus:outline-none focus:ring-2 focus:ring-pink-400"
-          />
-
-          {/* Image */}
-          <input
-            type="text"
-            placeholder="Product Image Url"
-            value={product.imageUrl}
-            onChange={(e) =>
-              setProduct({ ...product, imageUrl: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-pink-400 rounded-lg 
-            bg-pink-100 text-pink-600 placeholder:text-pink-400
-            focus:outline-none focus:ring-2 focus:ring-pink-400"
-          />
-
-          {/* Category */}
-          <select
-            value={product.category}
-            placeholder="-Select Category-"
-            onChange={(e) =>
-              setProduct({ ...product, category: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-pink-400 rounded-lg 
-            bg-pink-100 text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400"
-          >
-            <option value="sunglass">Sunglass</option>
-            <option value="shirt">Shirt</option>
-            <option value="headphone">Headphone</option>
-            <option value="mobile">Mobile</option>
-            <option value="laptop">Laptop</option>
-            <option value="shoes">Shoes</option>
-            <option value="home">Home</option>
-            <option value="watch">Watch</option>
-          </select>
-
-          {/* Description */}
-          <textarea
-            placeholder="Product Description"
-            rows="4"
-            value={product.description}
-            onChange={(e) =>
-              setProduct({ ...product, description: e.target.value })
-            }
-            className="w-full px-4 py-2 border border-pink-400 rounded-lg 
-            bg-pink-100 text-pink-600 placeholder:text-pink-400
-            focus:outline-none focus:ring-2 focus:ring-pink-400"
-          />
-
-          {/* Button */}
-          <button
-            type="submit"
-            className="w-full bg-pink-600 text-white py-2 rounded-lg 
-            font-semibold hover:bg-pink-700 transition"
-          >
-            Add Product
-          </button>
-
         </form>
       </div>
     </div>

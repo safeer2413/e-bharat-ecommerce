@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = JSON.parse(localStorage.getItem("cart")) || "[]";
-
+const initialState = JSON.parse(localStorage.getItem("cart")) || [];
+// const user = JSON.parse(localStorage.getItem("user"));
 export const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
         addToCart: (state, action) => {
             const item = state.find(
-                (item) => item.id === action.payload.id
+                (item) =>
+                    item.id === action.payload.id &&
+                    item.userid === action.payload.userid
             );
 
             if (item) {
@@ -25,11 +27,19 @@ export const cartSlice = createSlice({
             }
         },
         deleteFromCart(state, action) {
-            return state.filter((item) => item.id !== action.payload);
+            return state.filter(
+                (item) =>
+                    !(
+                        item.id === action.payload.id &&
+                        item.userid === action.payload.userid
+                    )
+            );
         },
         decrementQuantity: (state, action) => {
             const index = state.findIndex(
-                (item) => item.id === action.payload
+                (item) =>
+                    item.id === action.payload.id &&
+                    item.userid === action.payload.userid
             );
 
             if (index !== -1) {
@@ -41,14 +51,24 @@ export const cartSlice = createSlice({
             }
         },
         incrementQuantity: (state, action) => {
-            const item = state.find((item) => item.id === action.payload);
+            const item = state.find(
+                (item) =>
+                    item.id === action.payload.id &&
+                    item.userid === action.payload.userid
+            );
 
             if (item) {
                 item.quantity += 1;
             }
         },
+        clearUserCart: (state, action) => {
+            console.log("payload", action.payload);
+            return state.filter(
+                item => item.userid !== action.payload
+            );
+        }
     }
 })
 
-export const { addToCart, deleteFromCart, decrementQuantity, incrementQuantity } = cartSlice.actions;
+export const { addToCart, deleteFromCart, decrementQuantity, incrementQuantity, clearUserCart } = cartSlice.actions;
 export default cartSlice.reducer;

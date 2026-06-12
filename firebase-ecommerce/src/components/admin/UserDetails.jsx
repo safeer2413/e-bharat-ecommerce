@@ -1,9 +1,9 @@
+import { useContext } from "react";
+import MyContext from "../../context/MyContext";
+
 function UserDetails() {
-    const users = [
-        { id: 1, name: "Safeerkhan", email: "safeer@gmail.com", role: "Admin" },
-        { id: 2, name: "Akhil", email: "akhil@gmail.com", role: "User" },
-        { id: 3, name: "Rahul", email: "rahul@gmail.com", role: "User" },
-    ];
+    const context = useContext(MyContext);
+    const users = context.allUsers;
 
     return (
         <div className="bg-white rounded-xl shadow p-6">
@@ -22,18 +22,29 @@ function UserDetails() {
                 </thead>
 
                 <tbody>
-                    {users.map((user, index) => (
-                        <tr key={user.id} className="text-center">
-                            <td className="p-2 border">{index + 1}</td>
-                            <td className="p-2 border">{user.name}</td>
-                            <td className="p-2 border">{user.email}</td>
-                            <td className="p-2 border">
-                                <span className="px-2 py-1 rounded bg-blue-100 text-blue-700">
-                                    {user.role}
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
+                    {users.sort((a, b) => {
+                        if (a.role === "admin") return -1;
+                        if (b.role === "admin") return 1;
+                        return 0;
+                    })
+                        .map((user, index) => (
+                            <tr key={user.id} className="text-center">
+                                <td className="p-2 border">{index + 1}</td>
+                                <td className="p-2 border font-semibold">{user.name}</td>
+                                <td className="p-2 border">{user.email}</td>
+                                <td className="p-2 border">
+                                    <span
+                                        className={`py-1 rounded-full px-3 ${user.role === "admin"
+                                            ? "bg-pink-600 text-white font-semibold"
+                                            : "bg-blue-100 text-blue-700"
+                                            }`}
+                                    >
+                                        {user.role}
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+
                 </tbody>
             </table>
         </div>

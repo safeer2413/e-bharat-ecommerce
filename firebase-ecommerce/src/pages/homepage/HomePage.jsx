@@ -6,6 +6,7 @@ import Layout from "../../components/layout/Layout"
 import Testimonial from "../../components/testimonial/Testimonial"
 import MyContext from "../../context/MyContext"
 import ProductList from "../../components/productList/ProductList"
+import ProductShow from "../../AaaaaSample"
 
 function HomePage() {
   const context = useContext(MyContext);
@@ -18,6 +19,7 @@ function HomePage() {
       <ProductList />
       <FeatureTrack />
       <Testimonial />
+      {/* <ProductShow /> */}
     </Layout>
   )
 }

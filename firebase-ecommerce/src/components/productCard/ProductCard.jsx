@@ -3,28 +3,43 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+import { formatPrice } from "../../utils/formatPrice";
 function ProductCard({ product }) {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
+    const user = JSON.parse(localStorage.getItem("user"));
     const addCart = (product) => {
+        if (!user) {
+            toast.error("Please login first");
+            navigate("/login");
+            return;
+        }
         const cleanProduct = {
             ...product,
-            time: product.time?.toMillis?.() || Date.now()
+            price: Number(product.price),
+            userid: user?.uid,
+            useremail: user?.email,
+            time: Date.now()
         };
         dispatch(addToCart(cleanProduct));
         toast.success("Added to Cart");
     }
 
-    const removeCart = (id) => {
-        dispatch(deleteFromCart(id));
+    const removeCart = (id, userid) => {
+        dispatch(deleteFromCart({
+            id, userid
+        }));
         toast.error("Removed from Cart");
     }
 
+    const userCartItems = cartItems.filter(
+        (item) => item.userid === user?.uid
+    );
     const cartIds = useMemo(() => {
-        return new Set(cartItems.map(item => item.id));
-    }, [cartItems]);
+        return new Set(userCartItems.map(item => item.id));
+    }, [userCartItems]);
 
     return (
         <div className="bg-pink-100 rounded-lg shadow-md hover:shadow-xl transition duration-300">
@@ -50,7 +65,7 @@ function ProductCard({ product }) {
 
                 <div className="flex justify-between items-center mt-4">
                     <span className="text-pink-600 font-bold text-lg">
-                        ₹{product.price}
+                        ₹{formatPrice(product.price)}
                     </span>
 
                     <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
@@ -61,7 +76,7 @@ function ProductCard({ product }) {
                 {cartIds.has(product.id) ? (
                     <button
                         className="mt-4 w-full bg-red-800 text-white py-2 rounded-lg hover:bg-red-900 transition duration-300"
-                        onClick={() => removeCart(product.id)}
+                        onClick={() => removeCart(product.id, user?.uid)}
                     >
                         Remove from Cart
                     </button>

@@ -5,6 +5,7 @@ import { HashLoader } from "react-spinners";
 import { deleteDoc, doc } from "firebase/firestore";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import toast from "react-hot-toast";
+import { formatPrice } from "../../utils/formatPrice";
 
 function ProductDetails() {
 
@@ -37,8 +38,8 @@ function ProductDetails() {
 
                 {loader && (
                     <div className="absolute inset-0 z-50 
-    flex justify-center items-center
-    bg-white/20 backdrop-blur-[1px]">
+                                     flex justify-center items-center
+                                     bg-white/20 backdrop-blur-[1px]">
                         <HashLoader
                             color="#fd4967"
                             size={50}
@@ -72,7 +73,6 @@ function ProductDetails() {
                     <tbody>
                         {getAllProducts.map((item, index) => (
                             <tr key={item.id} className="text-center">
-
                                 <td className="p-3 border">
                                     {index + 1}
                                 </td>
@@ -90,7 +90,7 @@ function ProductDetails() {
                                 </td>
 
                                 <td className="p-3 border">
-                                    ₹ {item.price}
+                                    ₹ {formatPrice(item.price)}
                                 </td>
 
                                 <td className="p-3 border">
@@ -119,9 +119,10 @@ function ProductDetails() {
                     </tbody>
 
                 </table>
+
                 {showDeleteModal && (
                     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm 
-  flex justify-center items-center z-50">
+                                     flex justify-center items-center z-50">
 
                         <div className="bg-white p-6 rounded-xl shadow-lg w-80">
                             <h2 className="text-lg font-semibold mb-4">

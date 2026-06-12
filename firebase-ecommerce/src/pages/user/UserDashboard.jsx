@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useContext } from "react";
 import Layout from "../../components/layout/Layout";
+import MyContext from "../../context/MyContext";
+import Loader from "../../components/loader/Loader";
+import OrderList from "./OrderList";
+import { useNavigate } from "react-router-dom";
 
-const userDashboard = () => {
+const UserDashboard = () => {
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const context = useContext(MyContext);
+  const { getAllOrders, loader, user } = context;
+  const navigate = useNavigate();
+  console.log(user);
+  if (!user) {
+    return <Loader />;
+  }
   return (
     <Layout>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="m-4 font-semibold px-4 py-1 bg-pink-700 text-white rounded-lg hover:bg-pink-500 transition duration-300"
+      >
+        ← Back
+      </button>
       <section className="bg-gray-50 min-h-screen py-8">
+
         <div className="max-w-6xl mx-auto px-4">
+
 
           {/* USER CARD */}
           <div className="bg-pink-50 border border-pink-200 rounded-xl 
@@ -22,15 +41,20 @@ const userDashboard = () => {
 
             {/* User Info */}
             <div className="text-center text-pink-400">
-              <p className="text-lg font-bold">{user.role}</p>
-              <p className="text-lg font-bold">
-                Name : <span className="font-normal">{user.name}</span>
+              <p className="text-md font-bold">{user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}</p>
+              <p className="text-xl font-bold">{user?.name}
               </p>
-              <p className="text-lg font-bold">
-                Email : <span className="font-normal">{user.email}</span>
-              </p>
-                <p className="text-lg font-bold">
-                Date : <span className="font-normal">{user.date}</span>
+              <p className="font-bold">{user?.email}</p>
+              <p className="text-md font-bold text-pink-200">
+                Created At : <span className="font-normal">{
+                  new Date(
+                    user.createdAt.seconds * 1000
+                  ).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                }</span>
               </p>
             </div>
           </div>
@@ -41,59 +65,7 @@ const userDashboard = () => {
           </h2>
 
           {/* ORDER CARD */}
-          <div className="bg-white border rounded-xl overflow-hidden 
-                        grid grid-cols-1 md:grid-cols-3">
-
-            {/* LEFT : ORDER INFO */}
-            <div className="bg-pink-50 p-6 border-r">
-              <p className="mb-3">
-                <span className="font-semibold">Order Id</span><br />
-                #74557994327
-              </p>
-
-              <p className="mb-3">
-                <span className="font-semibold">Date</span><br />
-                {new Date().toLocaleDateString()}
-              </p>
-
-              <p className="mb-3">
-                <span className="font-semibold">Total Amount</span><br />
-                ₹84,499
-              </p>
-
-              <p>
-                <span className="font-semibold">Order Status</span><br />
-                <span className="text-green-600 font-medium">
-                  Confirmed
-                </span>
-              </p>
-            </div>
-
-            {/* RIGHT : PRODUCT INFO */}
-            <div className="md:col-span-2 p-6 flex gap-6 items-center">
-
-              {/* Product Image */}
-              <img
-                src="https://static.nike.com/a/images/t_default/6e1d8.jpg"
-                alt="Product"
-                className="w-24 h-24 object-contain border rounded-lg"
-              />
-
-              {/* Product Details */}
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">
-                  Nike Air Force 1 07 LV8
-                </h3>
-                <p className="text-gray-500">Orange</p>
-                <p className="text-gray-500">Qty : 1</p>
-              </div>
-
-              {/* Price */}
-              <div className="font-semibold text-lg">
-                ₹61,999
-              </div>
-            </div>
-          </div>
+          {loader ? <Loader /> : <OrderList orders={getAllOrders} loader={loader} user={user} />}
 
         </div>
       </section>
@@ -101,4 +73,4 @@ const userDashboard = () => {
   );
 };
 
-export default userDashboard;
+export default UserDashboard;

@@ -10,12 +10,13 @@ function Navbar() {
   const cartItems = useSelector((state) => state.cart);
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const userCartItems = cartItems.filter((obj) => obj.userid === user?.uid);
+
   const logout = () => {
-    localStorage.removeItem("users");
+    localStorage.removeItem("user");
     navigate("/login");
     toast.success("Logout Successfull");
   };
-
   const mobileLinkClass =
     "hover:text-black hover:bg-pink-600 rounded-lg py-2 transition-colors duration-300";
 
@@ -58,14 +59,14 @@ inline-block transform-gpu origin-center">
           )}
 
           {/* User */}
-          {user?.role === "User" && (
+          {user?.role === "user" && (
             <li className={desktopLinkClass}>
               <Link to="/user-dashboard" className="text-gray-800 [text-shadow:1px_1px_2px_white]">{user.name}</Link>
             </li>
           )}
 
           {/* Admin */}
-          {user?.role === "Admin" && (
+          {user?.role === "admin" && (
             <li className={desktopLinkClass}>
               <Link to="/admin-dashboard">Admin</Link>
             </li>
@@ -98,7 +99,7 @@ inline-block transform-gpu origin-center">
 
             <span className="absolute top-1 right-1 text-white 
     text-sm w-6 h-6 flex items-center justify-center">
-              {cartItems.length}
+              {userCartItems.length}
             </span>
           </div>
         </Link>
@@ -127,16 +128,16 @@ inline-block transform-gpu origin-center">
             <Link to="/login" className={mobileLinkClass}>Login</Link>
           )}
 
-          {user?.role === "User" && (
+          {user?.role === "user" && (
             <Link to="/user-dashboard" className={`text-gray-800 [text-shadow:1px_1px_2px_white] ${mobileLinkClass}`}>{user.name}</Link>
           )}
 
-          {user?.role === "Admin" && (
+          {user?.role === "admin" && (
             <Link to="/admin-dashboard" className={mobileLinkClass}>Admin</Link>
           )}
 
           {user && (
-            <div className="cursor-pointer" onClick={logout}>
+            <div className={mobileLinkClass} onClick={logout}>
               Logout
             </div>
           )}
