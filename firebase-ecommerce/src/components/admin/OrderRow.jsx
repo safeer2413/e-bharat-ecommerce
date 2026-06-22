@@ -9,6 +9,7 @@ function OrderRow({
     statusClasses,
     orderStatus
 }) {
+    console.log(item)
     return (
         <tr
             onClick={() => toggleOrder(order.id)}

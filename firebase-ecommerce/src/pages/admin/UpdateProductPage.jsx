@@ -31,25 +31,12 @@ function UpdateProductPage() {
     warranty: "",
     returnPolicy: "",
 
-    time: Timestamp.now(),
-    date: new Date().toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "2-digit",
-        year: "numeric"
-      }
-    )
   })
 
   useEffect(() => {
     const getSingleProduct = async () => {
       setIsLoading(true);
-      let downloadURL = "";
 
-      if (imageFile) {
-        downloadURL = await uploadImage(imageFile);
-      }
       const docRef = doc(fireDB, "products", id);
       const docSnap = await getDoc(docRef);
 
@@ -68,8 +55,7 @@ function UpdateProductPage() {
 
           stock: product.stock,
 
-          imageUrl: downloadURL ||
-            product.imageUrl,
+          imageUrl: product.imageUrl,
 
           deliveryDays: product.deliveryDays,
           warranty: product.warranty,
@@ -91,12 +77,22 @@ function UpdateProductPage() {
     if (product.title == "" || product.price == "" || (!product.imageUrl && !imageFile)) {
       return toast.error("Please fill all the fields");
     }
-
     setIsLoading(true);
 
     try {
+      let imageUrl = product.imageUrl;
+
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
       const docRef = doc(fireDB, "products", id);
-      await updateDoc(docRef, product);
+      await updateDoc(docRef,
+        {
+          ...product,
+          imageUrl,
+          updatedAt: Timestamp.now(),
+        });
       toast.success("Product Updated Successfully");
       navigate("/admin-dashboard");
 
@@ -123,9 +119,9 @@ function UpdateProductPage() {
         </button>
 
         {isLoading && (
-          <div className="absolute inset-0 z-50 
-                           flex justify-center items-center
-                           bg-white/20 backdrop-blur-[1px]">
+          <div className="absolute h-full max-h-screen inset-x-0 top-0 z-[9999]
+               flex justify-center items-center
+               bg-black/20 backdrop-blur-sm">
             <HashLoader
               color="#fd4967"
               size={50}
@@ -134,7 +130,7 @@ function UpdateProductPage() {
         )}
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-center text-pink-600 mb-6">
+        <h1 className="w-fit mx-auto text-2xl font-bold text-pink-600 border-2 border-red-700 rounded-xl px-5 py-2 mb-6">
           Update Product
         </h1>
 
@@ -146,6 +142,7 @@ function UpdateProductPage() {
             imageFile={imageFile}
             setImageFile={setImageFile}
             buttonText="Update Product"
+            isLoading={isLoading}
 
           />
 

@@ -4,9 +4,9 @@ import { HashLoader } from "react-spinners";
 function Loader() {
     return (
         <div
-            className="fixed inset-0 z-50
-                       flex justify-center items-center
-                       bg-pink-50/30 backdrop-blur-sm"
+            className="fixed h-full max-h-9/10 inset-0 z-[9999]
+               flex justify-center items-center
+               bg-black/20 backdrop-blur-sm"
         >
             <HashLoader
                 color="#fd4967"

@@ -19,6 +19,7 @@ function MyState({ children }) {
         orderLoader ||
         userLoader ||
         authLoader;
+
     const getAuthUSerHandler = () => {
 
         setAuthLoader(true);

@@ -18,13 +18,19 @@ import ProtectRouteForAdmin from './components/ProtectRoute.jsx/ProtectRouteForA
 import CategoryPage from './pages/category/CategoryPage';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import WishList from './pages/wishlist/WishList';
 
 function App() {
   const cartItems = useSelector((state) => state.cart);
+  const wishlist = useSelector(state => state.wishlist);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
 
   return (
     <>
@@ -38,6 +44,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/category/:categoryname" element={<CategoryPage />} />
+        <Route path="/wishlist" element={<WishList />} />
+
         <Route
           path="/user-dashboard"
           element={
@@ -67,6 +75,7 @@ function App() {
             </ProtectRouteForAdmin>
           }
         />
+
       </Routes>
       <Toaster />
     </>

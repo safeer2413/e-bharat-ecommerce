@@ -10,7 +10,7 @@ const UserDashboard = () => {
   const context = useContext(MyContext);
   const { getAllOrders, loader, user } = context;
   const navigate = useNavigate();
-  console.log(user);
+
   if (!user) {
     return <Loader />;
   }
@@ -48,7 +48,7 @@ const UserDashboard = () => {
               <p className="text-md font-bold text-pink-200">
                 Created At : <span className="font-normal">{
                   new Date(
-                    user.createdAt.seconds * 1000
+                    user?.createdAt?.seconds * 1000
                   ).toLocaleString("en-IN", {
                     day: "2-digit",
                     month: "short",

@@ -99,9 +99,9 @@ const AddProductPage = () => {
         </button>
 
         {isLoading && (
-          <div className="absolute inset-0 z-50 
-                           flex justify-center items-center
-                           bg-white/20 backdrop-blur-[1px] rounded-3xl">
+          <div className="absolute h-full max-h-screen inset-x-0 top-0 z-[9999]
+               flex justify-center items-center
+               bg-black/20 backdrop-blur-sm">
             <HashLoader
               color="#fd4967"
               size={50}
@@ -110,7 +110,7 @@ const AddProductPage = () => {
         )}
 
         {/* Heading */}
-        <h1 className="text-2xl font-bold text-center text-pink-600 mb-6">
+        <h1 className="w-fit mx-auto text-2xl font-bold text-pink-600 border-2 border-red-700 rounded-xl px-5 py-2 mb-6">
           Add Product
         </h1>
 

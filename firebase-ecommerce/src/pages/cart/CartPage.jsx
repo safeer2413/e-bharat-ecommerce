@@ -24,6 +24,7 @@ function CartPage() {
 
     // const user = auth.currentUser;
     const { user } = useContext(MyContext);
+
     const parsePrice = (price) => {
         return Number(
             String(price).replace(/₹|,/g, "")
@@ -93,6 +94,7 @@ function CartPage() {
         setLoading(true);
         //Order Info
         const orderInfo = {
+
             userId: user.uid,
 
             customer: {
@@ -125,7 +127,7 @@ function CartPage() {
             const orderRef = collection(fireDB, "orders");
             await addDoc(orderRef, orderInfo);
             dispatch(clearUserCart(user.uid));
-            console.log("User ID:", user.uid)
+
             setAddressInfo({
                 name: "",
                 address: "",

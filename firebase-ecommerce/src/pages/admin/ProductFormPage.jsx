@@ -1,5 +1,6 @@
 import React from "react";
 import ImageUpload from "./ImageUpload";
+import { HashLoader } from "react-spinners";
 
 const inputStyle = `
 w-full px-4 py-3 rounded-xl border border-pink-300
@@ -8,10 +9,9 @@ focus:outline-none focus:ring-2 focus:ring-pink-500
 focus:border-transparent transition-all duration-300
 `;
 
-function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonText }) {
+function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonText, isLoading }) {
 
     return (
-
         <>
             {/* Basic Information */}
             <section>
@@ -49,14 +49,14 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                         className={inputStyle}
                     >
                         <option value="">Select Category</option>
-                        <option value="sunglass">Sunglass</option>
-                        <option value="shirt">Shirt</option>
-                        <option value="headphone">Headphone</option>
-                        <option value="mobile">Mobile</option>
-                        <option value="laptop">Laptop</option>
-                        <option value="shoes">Shoes</option>
-                        <option value="home">Home</option>
-                        <option value="watch">Watch</option>
+                        <option value="Sunglass">Sunglass</option>
+                        <option value="Shirt">Shirt</option>
+                        <option value="Headphone">Headphone</option>
+                        <option value="Mobile">Mobile</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Shoes">Shoes</option>
+                        <option value="Home">Home</option>
+                        <option value="Watch">Watch</option>
                     </select>
 
                 </div>
@@ -211,6 +211,17 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                 />
             </section>
 
+            {isLoading && (
+                <div className="absolute h-screen inset-x-0 bottom-0 z-[9999]
+               flex justify-center items-center
+               bg-black/20 backdrop-blur-sm">
+                    <HashLoader
+                        color="#fd4967"
+                        size={50}
+                    />
+
+                </div>
+            )}
             <button
                 type="submit"
                 className="
@@ -221,8 +232,10 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                 transition-all duration-300
                 "
             >
+
                 {buttonText}
             </button>
+
         </>
     );
 }

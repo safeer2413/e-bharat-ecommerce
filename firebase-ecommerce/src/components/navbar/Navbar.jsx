@@ -4,6 +4,7 @@ import SearchBar from "../searchBar/SearchBar";
 import { FaShoppingCart } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { FaHeart } from "react-icons/fa6";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
@@ -11,6 +12,8 @@ function Navbar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const userCartItems = cartItems.filter((obj) => obj.userid === user?.uid);
+  const wishlistItems = useSelector(state => state.wishlist);
+  const userWishlist = wishlistItems.filter(item => item.userid === user?.uid)
 
   const logout = () => {
     localStorage.removeItem("user");
@@ -29,12 +32,12 @@ function Navbar() {
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="text-xl font-bold border-2 border-white px-2 rounded-lg 
-transition-transform duration-300 hover:scale-105 
-inline-block transform-gpu origin-center">
+                         transition-transform duration-300 hover:scale-105 
+                         inline-block transform-gpu origin-center">
           <Link to="/">E-Bharat</Link>
         </div>
 
-        <ul className="hidden md:flex gap-6 text-sm font-bold">
+        <ul className="hidden md:flex gap-6 text-lg font-bold">
 
           <li className={desktopLinkClass}>
             <Link to="/">Home</Link>
@@ -87,6 +90,25 @@ inline-block transform-gpu origin-center">
 
         </div>
 
+        {/* Wishlist */}
+        <Link
+          to="/wishlist"
+          className="relative flex items-center justify-center bg-white 
+                      rounded-full p-2 shadow-md hover:bg-pink-100 hover:scale-105
+                      transition-all duration-300"
+        >
+          <FaHeart className="text-pink-600 text-xl" />
+
+          {userWishlist.length > 0 && (
+            <span
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold
+                          rounded-full min-w-[20px] h-5 flex items-center justify-center"
+            >
+              {userWishlist.length}
+            </span>
+          )}
+        </Link>
+
         {/* Cart */}
         <Link className="hover:text-black font-bold flex items-center gap-1 hover:bg-pink-400 rounded-lg p-1 text-lg transition-colors duration-300"
           onClick={() => setOpen(false)} to="/cart">
@@ -98,7 +120,7 @@ inline-block transform-gpu origin-center">
             />
 
             <span className="absolute top-1 right-1 text-white 
-    text-sm w-6 h-6 flex items-center justify-center">
+                               text-sm w-6 h-6 flex items-center justify-center">
               {userCartItems.length}
             </span>
           </div>

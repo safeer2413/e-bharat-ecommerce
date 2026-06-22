@@ -63,6 +63,7 @@ function ProductDetails() {
                             <th className="p-3 border">Product Image</th>
                             <th className="p-3 border">Product Title</th>
                             <th className="p-3 border">Product Price</th>
+                            <th className="p-3 border">Product Stock</th>
                             <th className="p-3 border">Product Category</th>
                             <th className="p-3 border">Product Date</th>
                             <th className="p-3 border">Action</th>
@@ -91,6 +92,10 @@ function ProductDetails() {
 
                                 <td className="p-3 border">
                                     ₹ {formatPrice(item.price)}
+                                </td>
+
+                                <td className="p-3 border">
+                                    {formatPrice(item.stock)}
                                 </td>
 
                                 <td className="p-3 border">

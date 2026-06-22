@@ -34,7 +34,6 @@ const AdminDashboard = () => {
             icon: <FaUsers size={28} />,
         },
     ];
-
     useEffect(() => {
 
         if (admin?.role !== "admin") return;
@@ -126,13 +125,18 @@ const AdminDashboard = () => {
                             ))}
                         </TabList>
 
-                        <TabPanel className="mt-8 shadow-lg rounded-lg shadow-pink-200">
+                        <TabPanel
+                            className="mt-8 shadow-lg rounded-lg shadow-pink-200">
                             <ProductDetails />
                         </TabPanel>
-                        <TabPanel className="mt-8 shadow-lg rounded-lg shadow-pink-200">
+
+                        <TabPanel
+                            className="mt-8 shadow-lg rounded-lg shadow-pink-200">
                             <OrderDetails />
                         </TabPanel>
-                        <TabPanel className="mt-8 shadow-lg rounded-lg shadow-pink-200">
+
+                        <TabPanel
+                            className="mt-8 shadow-lg rounded-lg shadow-pink-200">
                             <UserDetails />
                         </TabPanel>
                     </Tabs>

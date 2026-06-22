@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = JSON.parse(localStorage.getItem("cart")) || [];
-// const user = JSON.parse(localStorage.getItem("user"));
+
 export const cartSlice = createSlice({
     name: "cart",
     initialState,
@@ -62,7 +62,6 @@ export const cartSlice = createSlice({
             }
         },
         clearUserCart: (state, action) => {
-            console.log("payload", action.payload);
             return state.filter(
                 item => item.userid !== action.payload
             );
