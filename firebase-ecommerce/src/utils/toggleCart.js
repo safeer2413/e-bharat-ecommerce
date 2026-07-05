@@ -1,30 +1,21 @@
 import toast from "react-hot-toast";
-import { addToCart, deleteFromCart } from "../redux/cartSlice";
+import { addItemToCart, removeItemFromCart } from "../services/cartService";
 
-export const handleCartClick = ({ product, user, navigate, isInCart, dispatch }) => {
+export const handleCartClick = ({ product, profile, navigate, isInCart }) => {
     if (!product) return;
 
-    if (!user) {
+    if (!profile) {
         toast.error("Please login first");
         navigate("/login");
         return;
     }
 
     if (isInCart) {
-        dispatch(deleteFromCart({
-            id: product.id,
-            userid: user.uid
-        }));
+        removeItemFromCart({ product, profile })
         toast.error("Removed from Cart");
-    } else {
-        const cleanProduct = {
-            ...product,
-            price: Number(product.price),
-            userid: user?.uid,
-            useremail: user?.email,
-        };
 
-        dispatch(addToCart(cleanProduct));
+    } else {
+        addItemToCart({ product, profile })
         toast.success("Added to Cart");
     }
 };

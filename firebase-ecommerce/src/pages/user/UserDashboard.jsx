@@ -8,10 +8,13 @@ import { useNavigate } from "react-router-dom";
 const UserDashboard = () => {
 
   const context = useContext(MyContext);
-  const { getAllOrders, loader, user } = context;
+  const { getAllOrders, loader, profile, authUser } = context;
   const navigate = useNavigate();
-
-  if (!user) {
+  console.log("all user", profile)
+  console.log("admin", authUser)
+  console.log(getAllOrders)
+  // console.log(getAllProducts)
+  if (!profile) {
     return <Loader />;
   }
   return (
@@ -41,14 +44,14 @@ const UserDashboard = () => {
 
             {/* User Info */}
             <div className="text-center text-pink-400">
-              <p className="text-md font-bold">{user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}</p>
-              <p className="text-xl font-bold">{user?.name}
+              <p className="text-md font-bold">{profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : ""}</p>
+              <p className="text-xl font-bold">{profile?.name}
               </p>
-              <p className="font-bold">{user?.email}</p>
+              <p className="font-bold">{authUser?.email}</p>
               <p className="text-md font-bold text-pink-200">
                 Created At : <span className="font-normal">{
                   new Date(
-                    user?.createdAt?.seconds * 1000
+                    profile?.createdAt?.seconds * 1000
                   ).toLocaleString("en-IN", {
                     day: "2-digit",
                     month: "short",
@@ -65,8 +68,13 @@ const UserDashboard = () => {
           </h2>
 
           {/* ORDER CARD */}
-          {loader ? <Loader /> : <OrderList orders={getAllOrders} loader={loader} user={user} />}
-
+          {loader ?
+            <Loader /> :
+            <OrderList
+              orders={getAllOrders}
+              loader={loader}
+              profile={profile}
+            />}
         </div>
       </section>
     </Layout>

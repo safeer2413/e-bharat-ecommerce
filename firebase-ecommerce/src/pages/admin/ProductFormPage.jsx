@@ -24,6 +24,7 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                     <input
                         type="text"
                         placeholder="Product Title"
+                        required
                         value={product.title}
                         onChange={(e) =>
                             setProduct({ ...product, title: e.target.value })
@@ -34,6 +35,7 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                     <input
                         type="text"
                         placeholder="Brand"
+                        required
                         value={product.brand}
                         onChange={(e) =>
                             setProduct({ ...product, brand: e.target.value })
@@ -43,6 +45,7 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
 
                     <select
                         value={product.category}
+                        required
                         onChange={(e) =>
                             setProduct({ ...product, category: e.target.value })
                         }
@@ -72,8 +75,11 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
 
                     <input
                         type="number"
+                        min="0"
                         placeholder="Selling Price"
+                        required
                         value={product.price}
+                        onWheel={(e) => e.currentTarget.blur()}
                         onChange={(e) =>
                             setProduct({ ...product, price: e.target.value })
                         }
@@ -82,7 +88,10 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
 
                     <input
                         type="number"
+                        min="0"
                         placeholder="Original Price"
+                        required
+                        onWheel={(e) => e.currentTarget.blur()}
                         value={product.originalPrice}
                         onChange={(e) =>
                             setProduct({
@@ -95,8 +104,11 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
 
                     <input
                         type="number"
+                        min="0"
                         placeholder="Stock Quantity"
+                        required
                         value={product.stock}
+                        onWheel={(e) => e.currentTarget.blur()}
                         onChange={(e) =>
                             setProduct({ ...product, stock: e.target.value })
                         }
@@ -106,7 +118,7 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                 </div>
             </section>
 
-            {/* Shipping */}
+            {/*Delivery and Shipping */}
             <section>
                 <h2 className="text-xl font-bold text-pink-700 border-b border-pink-200 pb-2 mb-4">
                     Shipping & Services
@@ -114,10 +126,47 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+                    <select
+                        value={product.deliveryType}
+                        required
+                        onChange={(e) => setProduct({
+                            ...product,
+                            deliveryType: e.target.value,
+                            deliveryCharge:
+                                e.target.value === "free" ? "" : product.deliveryCharge,
+                        })}
+                        className={inputStyle}
+                    >
+                        <option value="">Select Delivery Type</option>
+                        <option value="free">Free Delivery</option>
+                        <option value="paid">Paid Delivery</option>
+                    </select>
+
+                    {product.deliveryType === "paid" && (
+                        <input
+                            type="number"
+                            min="0"
+                            placeholder="Delivery Charge"
+                            required
+                            value={product.deliveryCharge}
+                            onWheel={(e) => e.currentTarget.blur()}
+                            onChange={(e) =>
+                                setProduct({
+                                    ...product,
+                                    deliveryCharge: e.target.value,
+                                })
+                            }
+                            className={inputStyle}
+                        />
+                    )}
+
                     <input
                         type="number"
+                        min="0"
                         placeholder="Delivery Days"
+                        required
                         value={product.deliveryDays}
+                        onWheel={(e) => e.currentTarget.blur()}
                         onChange={(e) =>
                             setProduct({
                                 ...product,
@@ -144,37 +193,34 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                         <option value="2 Years">2 Years</option>
                     </select>
 
-                    <div className="md:col-span-2">
-                        <select
-                            value={product.returnPolicy}
-                            onChange={(e) =>
-                                setProduct({
-                                    ...product,
-                                    returnPolicy: e.target.value,
-                                })
-                            }
-                            className={inputStyle}
-                        >
-                            <option value="">Select Return Policy</option>
-                            <option value="No Return">No Return</option>
-                            <option value="7 Days Replacement">
-                                7 Days Replacement
-                            </option>
-                            <option value="10 Days Return">
-                                10 Days Return
-                            </option>
-                            <option value="30 Days Return">
-                                30 Days Return
-                            </option>
-                        </select>
-                    </div>
+                    <select
+                        value={product.returnPolicy}
+                        onChange={(e) =>
+                            setProduct({
+                                ...product,
+                                returnPolicy: e.target.value,
+                            })
+                        }
+                        className={inputStyle}
+                    >
+                        <option value="">Select Return Policy</option>
+                        <option value="No Return">No Return</option>
+                        <option value="7 Days Replacement">
+                            7 Days Replacement
+                        </option>
+                        <option value="10 Days Return">
+                            10 Days Return
+                        </option>
+                        <option value="30 Days Return">
+                            30 Days Return
+                        </option>
+                    </select>
 
                 </div>
-            </section>
-
+            </section >
 
             {/* Product Media */}
-            <section>
+            < section>
                 <h2 className="text-xl font-bold text-pink-700 border-b border-pink-200 pb-2 mb-4">
                     Product Media
                 </h2>
@@ -189,10 +235,10 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                         setImageFile={setImageFile}
                     />
                 </div>
-            </section>
+            </ section>
 
             {/* Description */}
-            <section>
+            < section >
                 <h2 className="text-xl font-bold text-pink-700 border-b border-pink-200 pb-2 mb-4">
                     Description
                 </h2>
@@ -200,6 +246,7 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                 <textarea
                     rows={5}
                     placeholder="Product Description"
+                    required
                     value={product.description}
                     onChange={(e) =>
                         setProduct({
@@ -209,23 +256,22 @@ function ProductFormPage({ setProduct, product, imageFile, setImageFile, buttonT
                     }
                     className={inputStyle}
                 />
-            </section>
+            </ section>
 
             {isLoading && (
                 <div className="absolute h-screen inset-x-0 bottom-0 z-[9999]
-               flex justify-center items-center
-               bg-black/20 backdrop-blur-sm">
+                                 flex justify-center items-center
+                                 bg-black/20 backdrop-blur-sm">
                     <HashLoader
                         color="#fd4967"
                         size={50}
                     />
-
                 </div>
             )}
+
             <button
                 type="submit"
-                className="
-                w-full py-3 rounded-xl font-semibold text-white
+                className="w-full py-3 rounded-xl font-semibold text-white
                 bg-gradient-to-r from-pink-700 to-red-200
                 hover:from-pink-600 hover:to-red-400
                 shadow-lg hover:shadow-xl

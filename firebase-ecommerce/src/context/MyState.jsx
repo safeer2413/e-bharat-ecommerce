@@ -3,16 +3,27 @@ import MyContext from "./MyContext"
 import { collection, doc, getDoc, onSnapshot, orderBy, query } from "firebase/firestore";
 import { auth, fireDB } from "../firebase/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { setCart } from "../redux/cartSlice";
+import { setWishlist } from "../redux/wishlistSlice";
+import { loadCartFromCache } from "../services/cartService";
+import { loadWishlistFromCache } from "../services/wishlistService";
 
 function MyState({ children }) {
 
-    const [user, setUser] = useState(null);
-    const [getAllProducts, setGetAllProducts] = useState([]);
+    const dispatch = useDispatch();
 
+    const [authUser, setAuthUser] = useState(null);
+
+    const [profile, setProfile] = useState(() => {
+        return JSON.parse(localStorage.getItem("profile")) || null;
+    });
+
+    // ---------------- Loaders ----------------
     const [productLoader, setProductLoader] = useState(false);
     const [orderLoader, setOrderLoader] = useState(false);
     const [userLoader, setUserLoader] = useState(false);
-    const [authLoader, setAuthLoader] = useState(false);
+    const [authLoader, setAuthLoader] = useState(true);
 
     const loader =
         productLoader ||
@@ -20,47 +31,63 @@ function MyState({ children }) {
         userLoader ||
         authLoader;
 
-    const getAuthUSerHandler = () => {
-
+    // ---------------- Authentication ----------------
+    useEffect(() => {
         setAuthLoader(true);
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+
+        const unsubscribeAuthUSerHandler = onAuthStateChanged(auth, async (currentUser) => {
+
+            if (!currentUser) {
+                setAuthUser(null);
+                setProfile(null);
+                dispatch(setCart([]));
+                dispatch(setWishlist([]));
+                setAuthLoader(false);
+                return;
+            }
+
+            setAuthUser(currentUser);
+
+            // Cart Restore
+            const cachedCart = loadCartFromCache(currentUser.uid)
+
+            dispatch(setCart(cachedCart));
+
+            // Wishlist Restore
+            const cachedWishlist = loadWishlistFromCache(currentUser.uid)
+
+            dispatch(setWishlist(cachedWishlist));
 
             try {
-                if (currentUser) {
-                    const userRef = doc(fireDB, "user", currentUser.uid);
+                const userSnap = await getDoc(
+                    doc(fireDB, "user", currentUser.uid)
+                );
 
-                    const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    setProfile(userData);
+                    localStorage.setItem(
+                        "profile",
+                        JSON.stringify(userData)
+                    );
 
-                    if (userSnap.exists()) {
-
-                        setUser({
-                            uid: currentUser.uid,
-                            email: currentUser.email,
-
-                            ...userSnap.data()
-                        });
-
-                    } else {
-                        setUser(null);
-                    }
                 } else {
-                    setUser(null);
+                    console.warn("User document not found");
                 }
+
             } catch (error) {
-
-                console.log(error);
-                setUser(null);
-
+                console.log("Catch Error:", error);
             } finally {
                 setAuthLoader(false);
             }
-        }
-        );
+        });
 
-        return unsubscribe;
-    }
+        return unsubscribeAuthUSerHandler;
 
-    // Get all Products function
+    }, [dispatch]);
+
+    // ---------------- Products ----------------
+    const [getAllProducts, setGetAllProducts] = useState([]);
     const getAllProductsHandler = () => {
 
         setProductLoader(true);
@@ -93,7 +120,7 @@ function MyState({ children }) {
         return data;
     };
 
-    // Get all Orders function
+    // ---------------- Orders ----------------
     const [getAllOrders, setGetAllOrders] = useState([]);
     const getAllOrdersHandler = () => {
 
@@ -129,6 +156,7 @@ function MyState({ children }) {
         return data;
     };
 
+    // ---------------- Users ----------------
     const [allUsers, setAllUsers] = useState([]);
     const getAllUserHandler = () => {
 
@@ -159,16 +187,13 @@ function MyState({ children }) {
         return data;
     };
 
+    // ---------------- Initial Data ----------------
     useEffect(() => {
-
-        const unsubscribeAuthUSerHandler = getAuthUSerHandler();
-
         const unsubscribeProducts = getAllProductsHandler();
 
         const unsubscribeOrders = getAllOrdersHandler();
 
         return () => {
-            unsubscribeAuthUSerHandler();
             unsubscribeProducts();
             unsubscribeOrders();
         };
@@ -176,19 +201,26 @@ function MyState({ children }) {
     }, []);
 
     return (
-        <MyContext.Provider value={{
-            user,
-            loader,
+        <MyContext.Provider
+            value={{
+                authUser,
+                profile,
 
-            getAllProducts,
-            getAllProductsHandler,
+                setAuthUser,
+                setProfile,
 
-            getAllOrders,
-            getAllOrdersHandler,
+                loader,
+                authLoader,
 
-            allUsers,
-            getAllUserHandler
-        }}>
+                getAllProducts,
+                getAllProductsHandler,
+
+                getAllOrders,
+                getAllOrdersHandler,
+
+                allUsers,
+                getAllUserHandler
+            }}>
             {children}
         </MyContext.Provider>
     )

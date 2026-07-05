@@ -8,11 +8,11 @@ import AllProductSkeleton from '../../components/skeleton/AllProductSkeleton';
 function WishList() {
 
     const context = useContext(MyContext);
-    const { user, loader } = context;
+    const { profile, loader } = context;
     const wishlistItems = useSelector((state) => state.wishlist);
 
     const userWishlist = wishlistItems.filter(
-        (item) => item.userid === user?.uid
+        (item) => item.userid === profile?.uid
     );
 
     return (

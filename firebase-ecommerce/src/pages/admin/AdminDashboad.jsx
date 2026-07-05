@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
     const context = useContext(MyContext);
-    const { getAllProducts, getAllOrders, getAllUserHandler, allUsers, user: admin } = context;
+    const { getAllProducts, getAllOrders, getAllUserHandler, allUsers, profile: admin } = context;
     const navigate = useNavigate();
 
     const stats = [

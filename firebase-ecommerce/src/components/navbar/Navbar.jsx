@@ -1,25 +1,30 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import SearchBar from "../searchBar/SearchBar";
 import { FaShoppingCart } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { FaHeart } from "react-icons/fa6";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase/FirebaseConfig";
+import MyContext from "../../context/MyContext";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { profile } = useContext(MyContext);
   const navigate = useNavigate();
-  const userCartItems = cartItems.filter((obj) => obj.userid === user?.uid);
+  const userCartItems = cartItems.filter((obj) => obj.userid === profile?.uid);
   const wishlistItems = useSelector(state => state.wishlist);
-  const userWishlist = wishlistItems.filter(item => item.userid === user?.uid)
+  const userWishlist = wishlistItems.filter(item => item.userid === profile?.uid)
 
-  const logout = () => {
-    localStorage.removeItem("user");
+  const logout = async () => {
+    await signOut(auth);
+    localStorage.removeItem("profile");
     navigate("/login");
     toast.success("Logout Successfull");
   };
+
   const mobileLinkClass =
     "hover:text-black hover:bg-pink-600 rounded-lg py-2 transition-colors duration-300";
 
@@ -28,8 +33,10 @@ function Navbar() {
 
   return (
     <nav className="sticky top-0 z-40 bg-pink-600 text-white px-6 py-3">
+
       {/* Top row */}
       <div className="flex items-center justify-between">
+
         {/* Logo */}
         <div className="text-xl font-bold border-2 border-white px-2 rounded-lg 
                          transition-transform duration-300 hover:scale-105 
@@ -37,7 +44,7 @@ function Navbar() {
           <Link to="/">E-Bharat</Link>
         </div>
 
-        <ul className="hidden md:flex gap-6 text-lg font-bold">
+        <ul className="hidden lg:flex gap-6 text-lg font-bold">
 
           <li className={desktopLinkClass}>
             <Link to="/">Home</Link>
@@ -48,35 +55,38 @@ function Navbar() {
           </li>
 
           {/* Signup */}
-          {!user && (
+          {!profile && (
             <li className={desktopLinkClass}>
               <Link to="/signup">Signup</Link>
             </li>
           )}
 
           {/* Login */}
-          {!user && (
+          {!profile && (
             <li className={desktopLinkClass}>
               <Link to="/login">Login</Link>
             </li>
           )}
 
           {/* User */}
-          {user?.role === "user" && (
+          {profile?.role === "user" && (
             <li className={desktopLinkClass}>
-              <Link to="/user-dashboard" className="text-gray-800 [text-shadow:1px_1px_2px_white]">{user.name}</Link>
+              <Link to="/user-dashboard"
+                className="text-gray-800 [text-shadow:1px_1px_2px_white]">
+                {profile.name}
+              </Link>
             </li>
           )}
 
           {/* Admin */}
-          {user?.role === "admin" && (
+          {profile?.role === "admin" && (
             <li className={desktopLinkClass}>
               <Link to="/admin-dashboard">Admin</Link>
             </li>
           )}
 
           {/* Logout  */}
-          {user && (
+          {profile && (
             <li className={desktopLinkClass} onClick={logout}>
               Logout
             </li>
@@ -85,7 +95,7 @@ function Navbar() {
         </ul>
 
         {/* Desktop Search */}
-        <div className="hidde md:block">
+        <div className="">
           <SearchBar />
 
         </div>
@@ -110,7 +120,8 @@ function Navbar() {
         </Link>
 
         {/* Cart */}
-        <Link className="hover:text-black font-bold flex items-center gap-1 hover:bg-pink-400 rounded-lg p-1 text-lg transition-colors duration-300"
+        <Link className="hover:text-black font-bold flex items-center gap-1 hover:bg-pink-400
+                          rounded-lg p-1 text-lg transition-colors duration-300"
           onClick={() => setOpen(false)} to="/cart">
           <div className="relative">
             <img
@@ -128,7 +139,7 @@ function Navbar() {
 
         {/* Hamburger */}
         <button
-          className="md:hidden text-2xl"
+          className="lg:hidden text-2xl"
           onClick={() => setOpen(!open)}
         >
           ☰
@@ -137,30 +148,38 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden mt-4 bg-pink-400 rounded-lg p-4 flex flex-col gap-4 text-center font-bold w-48 mx-auto">
+        <div className="md:hidden mt-4 bg-pink-400 rounded-lg p-4 flex
+                        flex-col gap-4 text-center font-bold w-48 mx-auto">
 
-          <Link to="/allproduct" className={mobileLinkClass}>All Product</Link>
+          <Link to="/allproduct" className={mobileLinkClass}>🛍️ All Product</Link>
 
 
-          {!user && (
+          {!profile && (
             <Link to="/signup" className={mobileLinkClass}>Signup</Link>
           )}
 
-          {!user && (
+          {!profile && (
             <Link to="/login" className={mobileLinkClass}>Login</Link>
           )}
 
-          {user?.role === "user" && (
-            <Link to="/user-dashboard" className={`text-gray-800 [text-shadow:1px_1px_2px_white] ${mobileLinkClass}`}>{user.name}</Link>
+          {profile?.role === "user" && (
+            <Link to="/user-dashboard"
+              className={`text-gray-800 [text-shadow:1px_1px_2px_white]
+              ${mobileLinkClass}`}>
+              👤 {profile.name}
+            </Link>
           )}
 
-          {user?.role === "admin" && (
-            <Link to="/admin-dashboard" className={mobileLinkClass}>Admin</Link>
+          {profile?.role === "admin" && (
+            <Link to="/admin-dashboard"
+              className={mobileLinkClass}>
+              👤 Admin
+            </Link>
           )}
 
-          {user && (
+          {profile && (
             <div className={mobileLinkClass} onClick={logout}>
-              Logout
+              ⏻ Logout
             </div>
           )}
         </div>

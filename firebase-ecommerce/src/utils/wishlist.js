@@ -1,27 +1,20 @@
 import toast from "react-hot-toast";
-import { addToWishlist, removeFromWishlist } from "../redux/wishlistSlice";
+import { addItemToWishlist, removeItemFromWishlist } from "../services/wishlistService";
 
-export const handleWishlist = ({ user, product, dispatch, navigate, isWishlisted }) => {
+export const handleWishlist = ({ profile, product, navigate, isWishlisted }) => {
 
-    if (!user) {
+    if (!profile) {
         toast.error("Please Login First");
         navigate("/login");
         return;
     }
 
     if (isWishlisted) {
-        dispatch(removeFromWishlist({
-            id: product.id,
-            userid: user.uid
-        }));
-
+        removeItemFromWishlist({ product, profile });
         toast.error("Removed From Wishlist");
-    } else {
-        dispatch(addToWishlist({
-            ...product,
-            userid: user.uid
-        }));
 
+    } else {
+        addItemToWishlist({ product, profile });
         toast.success("Added To Wishlist");
     }
 };

@@ -1,23 +1,23 @@
 import { useContext } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/formatPrice";
 import { getDiscountPercentage } from "../../utils/getDiscountPercentage";
-import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import { FaHeart, FaRegHeart, FaTruckFast } from "react-icons/fa6";
 import { handleWishlist } from "../../utils/wishlist";
 import MyContext from "../../context/MyContext";
 import { handleCartClick } from "../../utils/toggleCart";
 import StockStatus from "../stockStatus/StockStatus";
 import Rating from "../rating/Rating";
+import { getDeliveryDate } from "../../utils/getDeliveryDate";
 
 function ProductCard({ product }) {
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
-    const { user } = useContext(MyContext);
+    const { profile } = useContext(MyContext);
 
-    const isInCart = cartItems.some(item => item.id === product.id && item.userid === user?.uid);
+    const isInCart = cartItems.some(item => item.id === product.id && item.userid === profile?.uid);
 
     const discountPercentage = getDiscountPercentage(
         product.originalPrice,
@@ -26,11 +26,10 @@ function ProductCard({ product }) {
 
     const wishlistItems = useSelector(state => state.wishlist);
 
-
     const isWishlisted = wishlistItems.some(
         item =>
             item.id === product.id &&
-            item.userid === user?.uid
+            item.userid === profile?.uid
     );
 
     return (
@@ -43,8 +42,9 @@ function ProductCard({ product }) {
                     </div>
                 )}
 
+                {/* Wishlist button */}
                 <div
-                    onClick={() => handleWishlist({ navigate, user, product, dispatch, isWishlisted })}
+                    onClick={() => handleWishlist({ navigate, profile, product, isWishlisted })}
                     className="absolute top-3 right-3 z-10 cursor-pointer bg-white p-2 rounded-full shadow-md"
                 >
                     {isWishlisted ? (
@@ -53,6 +53,7 @@ function ProductCard({ product }) {
                         <FaRegHeart className="text-gray-500 text-xl" />
                     )}
                 </div>
+                {/* Image */}
                 <img
                     onClick={() => navigate(`/productInfo/${product.id}`)}
                     src={product.imageUrl}
@@ -62,6 +63,7 @@ function ProductCard({ product }) {
                 />
             </div>
 
+            {/* Product details */}
             <div className="p-4">
                 <h3 className="font-semibold text-lg truncate">
                     {product.title}
@@ -71,6 +73,7 @@ function ProductCard({ product }) {
                     {product.description}
                 </p>
 
+                {/* Rating */}
                 <div className="mt-1 flex items-center gap-2">
 
                     <Rating rating={product.rating || 4.5} size="text-md" />
@@ -85,6 +88,7 @@ function ProductCard({ product }) {
 
                 </div>
 
+                {/* Price */}
                 <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-pink-600 font-bold text-lg">
                         ₹{formatPrice(product.price)}
@@ -103,7 +107,32 @@ function ProductCard({ product }) {
                     )}
                 </div>
 
-                <h5 className='mt-1 text-sm font-semibold '>Free Delivery by E-Bharat</h5>
+                {/* Delivery details */}
+                <div className="text-sm">
+                    {product.deliveryType === "free" ? (
+                        <div className="flex gap-2">
+                            <span className="text-green-600 flex">
+                                <FaTruckFast className="mr-2 text-xl" />
+                                FREE Delivery
+                            </span>
+
+                            <span className="font-bold">
+                                {getDeliveryDate(product.deliveryDays)}
+                            </span>
+                        </div>
+                    ) : (
+                        <>
+                            <p className="font-semibold flex text-green-600">
+                                <FaTruckFast className="mr-2 text-xl" />
+                                Delivery Charge ₹{product.deliveryCharge}
+                            </p>
+
+                            <p className="font-bold">
+                                by {getDeliveryDate(product.deliveryDays)}
+                            </p>
+                        </>
+                    )}
+                </div>
 
                 {/* Stock */}
                 <div className="mt-4">
@@ -114,13 +143,14 @@ function ProductCard({ product }) {
                 <div className="mt-6 flex gap-4">
                     <button
                         disabled={Number(product.stock) <= 0}
-                        onClick={() => handleCartClick({ product, user, navigate, isInCart, dispatch })}
+                        onClick={() => handleCartClick({ product, profile, navigate, isInCart })}
                         className={`flex-1 py-3 rounded-lg text-white font-bold transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed
                               ${isInCart ? "bg-red-700 hover:bg-red-500" : "bg-pink-700 hover:bg-pink-500"
                             }`}
                     >
                         {isInCart ? "🗑 Remove from Cart" : "🛒 Add to Cart"}
                     </button>
+                    
                 </div>
             </div>
         </div>

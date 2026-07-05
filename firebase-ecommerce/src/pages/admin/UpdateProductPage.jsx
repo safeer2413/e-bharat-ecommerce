@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { HashLoader } from "react-spinners";
 import toast from "react-hot-toast";
-import { uploadImage } from "../../utils/cloudinary";
+import { uploadImage } from "../../utils/cloudinaryImage";
 import ProductFormPage from "./ProductFormPage";
 
 function UpdateProductPage() {
@@ -27,10 +27,12 @@ function UpdateProductPage() {
 
     imageUrl: "",
 
+    deliveryType: "",
+    deliveryCharge: "",
     deliveryDays: "",
+
     warranty: "",
     returnPolicy: "",
-
   })
 
   useEffect(() => {
@@ -38,6 +40,7 @@ function UpdateProductPage() {
       setIsLoading(true);
 
       const docRef = doc(fireDB, "products", id);
+
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -57,7 +60,10 @@ function UpdateProductPage() {
 
           imageUrl: product.imageUrl,
 
+          deliveryType: product.deliveryType,
+          deliveryCharge: product.deliveryCharge,
           deliveryDays: product.deliveryDays,
+
           warranty: product.warranty,
           returnPolicy: product.returnPolicy,
         });
@@ -87,12 +93,22 @@ function UpdateProductPage() {
       }
 
       const docRef = doc(fireDB, "products", id);
-      await updateDoc(docRef,
+     await updateDoc(docRef,
         {
           ...product,
+
+          price: Number(product.price),
+          originalPrice: Number(product.originalPrice),
+          stock: Number(product.stock),
+          deliveryDays: Number(product.deliveryDays),
+          deliveryCharge:
+            product.deliveryType === "free"
+              ? 0
+              : Number(product.deliveryCharge),
           imageUrl,
           updatedAt: Timestamp.now(),
         });
+// console.log(product.deliveryCharge, product.deliveryType)
       toast.success("Product Updated Successfully");
       navigate("/admin-dashboard");
 
@@ -113,7 +129,8 @@ function UpdateProductPage() {
 
         <button
           onClick={() => navigate(-1)}
-          className="mb-3 font-semibold px-4 py-1 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-50 transition-all duration-300"
+          className="mb-3 font-semibold px-4 py-1 bg-pink-100 text-pink-600
+                      rounded-lg hover:bg-pink-50 transition-all duration-300"
         >
           ← Back
         </button>
@@ -130,7 +147,8 @@ function UpdateProductPage() {
         )}
 
         {/* Title */}
-        <h1 className="w-fit mx-auto text-2xl font-bold text-pink-600 border-2 border-red-700 rounded-xl px-5 py-2 mb-6">
+        <h1 className="w-fit mx-auto text-2xl font-bold text-pink-600
+                        border-2 border-red-700 rounded-xl px-5 py-2 mb-6">
           Update Product
         </h1>
 

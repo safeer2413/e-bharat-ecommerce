@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { HashLoader } from "react-spinners";
+import MyContext from "../../context/MyContext";
 
 function Login() {
 
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
+  const { setProfile } = useContext(MyContext);
 
   const [userLogin, setUserLogin] = useState({
     email: "",
@@ -32,7 +34,6 @@ function Login() {
         userLogin.email,
         userLogin.password
       );
-
       const uid = userCredential.user.uid;
 
       const userDoc = await getDoc(doc(fireDB, "user", uid));
@@ -45,9 +46,10 @@ function Login() {
       }
 
       const userData = userDoc.data();
+      setProfile(userData);
 
       // safe save
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("profile", JSON.stringify(userData));
 
       setUserLogin({ email: "", password: "" });
       toast.success("Login Successful");

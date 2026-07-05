@@ -1,9 +1,14 @@
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import MyContext from "../../context/MyContext";
+import DashboardSkeleton from "../skeleton/DashboardSkeleton.jsx";
 
 const ProtectRouteForAdmin = ({ children }) => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const { profile, authLoader } = useContext(MyContext);
 
-    if (!user || user.role !== "admin") {
+    if (authLoader) return <DashboardSkeleton />;
+
+    if (!profile || profile.role !== "admin") {
         return <Navigate to="/login" />;
     }
 

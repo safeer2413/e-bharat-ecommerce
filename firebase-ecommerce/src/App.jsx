@@ -16,22 +16,11 @@ import UpdateProductPage from './pages/admin/UpdateProductPage'
 import ProtectRouteForUser from './components/ProtectRoute.jsx/ProtectRouteForUser';
 import ProtectRouteForAdmin from './components/ProtectRoute.jsx/ProtectRouteForAdmin';
 import CategoryPage from './pages/category/CategoryPage';
-import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import WishList from './pages/wishlist/WishList';
+import MyContext from './context/MyContext';
 
 function App() {
-  const cartItems = useSelector((state) => state.cart);
-  const wishlist = useSelector(state => state.wishlist);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
-
+  
   return (
     <>
       <ScrollTop />
@@ -54,6 +43,7 @@ function App() {
             </ProtectRouteForUser>
           }
         />
+
         <Route
           path="/admin-dashboard"
           element={
@@ -62,12 +52,14 @@ function App() {
             </ProtectRouteForAdmin>
           }
         />
+
         <Route path="/addproduct"
           element={
             <ProtectRouteForAdmin>
               <AddProductPage />
             </ProtectRouteForAdmin>}
         />
+        
         <Route path="/updateproduct/:id"
           element={
             <ProtectRouteForAdmin>

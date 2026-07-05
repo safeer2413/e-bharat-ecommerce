@@ -2,10 +2,24 @@ function CartSkeleton() {
     return (
         <div className="min-h-screen bg-pink-100 animate-pulse">
 
-
             {/* Heading */}
-            <div className="flex justify-center py-10">
-                <div className="h-10 w-64 bg-pink-50 rounded"></div>
+            <div className="bg-pink-600 rounded-xl p-5 mb-8 animate-pulse">
+
+                <div className="flex items-center gap-6 justify-evenly">
+                    {/* Logo */}
+                    <div className="h-9 w-24 rounded-xl bg-pink-400"></div>
+                    {/* Search */}
+                    <div className=" flex-1">
+                        <div className="h-9 rounded-xl bg-pink-400"></div>
+                    </div>
+                    {/* Wishlist */}
+                    <div className="w-10 h-10 rounded-full bg-pink-400"></div>
+                    {/* Cart */}
+                    <div className="w-11 h-9 rounded-lg bg-pink-400"></div>
+                    {/* Hamburger */}
+                    <div className="w-9 h-9 rounded bg-pink-400 md:hidden"></div>
+                </div>
+
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 px-5">

@@ -1,6 +1,25 @@
 function ProductInfoSkeleton() {
   return (
-    <div className="w-3/4 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-lg p-6 mx-auto animate-pulse">
+    <div className="w- grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-lg p-6 mx-auto animate-pulse">
+
+      <div className="bg-pink-600 rounded-xl p-5 mb-8 animate-pulse">
+
+        <div className="flex items-center gap-6 justify-evenly">
+          {/* Logo */}
+          <div className="h-9 w-24 rounded-xl bg-pink-400"></div>
+          {/* Search */}
+          <div className=" flex-1">
+            <div className="h-9 rounded-xl bg-pink-400"></div>
+          </div>
+          {/* Wishlist */}
+          <div className="w-10 h-10 rounded-full bg-pink-400"></div>
+          {/* Cart */}
+          <div className="w-11 h-9 rounded-lg bg-pink-400"></div>
+          {/* Hamburger */}
+          <div className="w-9 h-9 rounded bg-pink-400 md:hidden"></div>
+        </div>
+
+      </div>
 
       <div className="flex justify-center">
         <div className="w-full h-[450px] bg-gray-200 rounded-lg" />

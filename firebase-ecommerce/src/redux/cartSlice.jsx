@@ -1,18 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
-const initialState = JSON.parse(localStorage.getItem("cart")) || [];
+const initialState = [];
 
 export const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
+        setCart: (state, action) => {
+            return action.payload;
+        },
         addToCart: (state, action) => {
             const item = state.find(
                 (item) =>
                     item.id === action.payload.id &&
                     item.userid === action.payload.userid
             );
-
             if (item) {
                 // already exists → increase quantity
                 item.quantity += 1;
@@ -47,6 +50,7 @@ export const cartSlice = createSlice({
                     state[index].quantity -= 1;
                 } else {
                     state.splice(index, 1); // remove item
+                    toast.error("Removed from Cart");
                 }
             }
         },
@@ -69,5 +73,5 @@ export const cartSlice = createSlice({
     }
 })
 
-export const { addToCart, deleteFromCart, decrementQuantity, incrementQuantity, clearUserCart } = cartSlice.actions;
+export const { setCart, addToCart, deleteFromCart, decrementQuantity, incrementQuantity, clearUserCart } = cartSlice.actions;
 export default cartSlice.reducer;

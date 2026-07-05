@@ -4,7 +4,7 @@ import { addDoc, collection, Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { HashLoader } from "react-spinners";
-import { uploadImage } from "../../utils/cloudinary";
+import { uploadImage } from "../../utils/cloudinaryImage";
 import ProductFormPage from "./ProductFormPage";
 
 const AddProductPage = () => {
@@ -28,11 +28,13 @@ const AddProductPage = () => {
 
     imageUrl: "",
 
+    deliveryType: "",
+    deliveryCharge: "",
     deliveryDays: "",
+
     warranty: "",
     returnPolicy: "",
   });
-
 
   const addProduct = async (e) => {
     e?.preventDefault();
@@ -58,6 +60,10 @@ const AddProductPage = () => {
         originalPrice: Number(product.originalPrice),
         stock: Number(product.stock),
         deliveryDays: Number(product.deliveryDays),
+        deliveryCharge:
+          product.deliveryType === "free"
+            ? 0
+            : Number(product.deliveryCharge),
         imageUrl:
           downloadURL ||
           product.imageUrl ||

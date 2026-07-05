@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { formatPrice } from '../utils/formatPrice'
 import { getDiscountPercentage } from '../utils/getDiscountPercentage'
 import Rating from '../components/rating/Rating';
+import { getDeliveryDate } from '../utils/getDeliveryDate';
+import { FaTruckFast } from 'react-icons/fa6';
 
 function RelatedProducts({ relatedProducts }) {
     const navigate = useNavigate();
@@ -41,36 +43,62 @@ function RelatedProducts({ relatedProducts }) {
                                     <div className="mt-auto">
                                         <div className="mt-1 flex items-center gap-2">
 
-                                            <Rating rating={(item.rating || 4.5)} size="text-sm" />
+                                            <Rating rating={(item.rating ?? 4.5)} size="text-sm" />
 
                                             <span className="font-semibold text-gray-700">
-                                                {item.rating || 4.5}
+                                                {item.rating ?? 4.5}
                                             </span>
                                             <span className="text-gray-500 text-sm">
-                                                ({item.totalReviews || 149})
+                                                ({item.totalReviews ?? 149})
                                             </span>
                                         </div>
 
-                                        <h4 className="text-lg font-bold text-pink-600">
-                                            ₹{formatPrice(item.price)}
-                                        </h4>
+                                        {/* Price */}
+                                        <div className="mt-3">
 
-                                        <div className="flex items-center gap-2 flex-wrap mt-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
 
-                                            <span className="text-gray-400 text-sm line-through">
-                                                ₹{formatPrice(item.originalPrice)}
-                                            </span>
+                                                <h4 className="text-2xl font-bold text-pink-600">
+                                                    ₹{formatPrice(item.price)}
+                                                </h4>
 
-                                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
-                                                {getDiscountPercentage(
-                                                    Number(item.originalPrice),
-                                                    Number(item.price)
-                                                )}% OFF
-                                            </span>
+                                                <span className="text-sm text-gray-400 line-through">
+                                                    ₹{formatPrice(item.originalPrice)}
+                                                </span>
+
+                                                <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                                                    {getDiscountPercentage(item.originalPrice, item.price)}% OFF
+                                                </span>
+
+                                            </div>
+
+                                            <p className="mt-1 text-xs text-green-600 font-medium">
+                                                You save ₹{formatPrice(item.originalPrice - item.price)}
+                                            </p>
 
                                         </div>
 
-                                        <h5 className='text-xs font-semibold '>Free Delivery by E-Bharat</h5>
+                                        {/* Delivery */}
+                                        <div className="mt-4 rounded-xl bg-pink-50 border border-pink-100 p-3">
+
+                                            <div className="flex items-center justify-center gap-2 text-green-600 font-semibold">
+
+                                                <FaTruckFast className="text-lg" />
+
+                                                {item.deliveryType === "free"
+                                                    ? "FREE Delivery"
+                                                    : `Delivery ₹${formatPrice(item.deliveryCharge)}`}
+
+                                            </div>
+
+                                            <p className="mt-2 text-center text-sm text-gray-600">
+                                                Get it by <span className="font-bold text-gray-800">
+                                                    {getDeliveryDate(item.deliveryDays ?? 0)}
+                                                </span>
+                                            </p>
+
+                                        </div>
+
                                     </div>
                                 </div>
 

@@ -1,11 +1,11 @@
 import Loader from "../../components/loader/Loader";
 import { formatPrice } from "../../utils/formatPrice";
 
-function OrderList({ orders, loader, user }) {
+function OrderList({ orders, loader, profile }) {
 
     // ================= USER ORDERS =================
     const userOrders = orders.filter(
-        (order) => order.userId === user?.uid
+        (order) => order.userId === profile?.uid
     );
     // ================= LOADER =================
     if (loader) {
